@@ -7,14 +7,16 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import GeolocationExample from './Localizacao';
+import AddPhoto from '../screens/addPhoto'
 
 export default class App extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>Hello World!</Text>
+        {/* <Text style={styles.welcome}>Hello World!</Text>
         <Text style={styles.instructions}>Dados de Localização</Text>
-        <GeolocationExample />
+        <GeolocationExample /> */}
+        <AddPhoto/>
       </View>
     );
   }
