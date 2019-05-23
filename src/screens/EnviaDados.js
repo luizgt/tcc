@@ -38,17 +38,17 @@ export default class EnviaDados extends Component{
                         <Image source={this.state.image} style={styles.image}/>
                     </View>
                     <TouchableOpacity onPress={this.pickImage} style={styles.buttom}>
-                        <Text style={styles.buttomText}>Escolha a foto</Text>
+                        <Text style={styles.Text}>Escolha a foto</Text>
                     </TouchableOpacity>
                     <TextInput placeholder="Descrição da imagem..."
                         style={styles.input} value={this.state.comment}
                         onChangeText={comment => this.setState({ comment })}/>
-                    <View style={{marginBottom:0}}>
+                    <View style={styles.localizacao}>
                         <Localizacao/>
                     </View>
                     <TouchableOpacity onPress={this.save}
                         style={styles.buttomEnviar}>
-                            <Text style={styles.buttomText}>Enviar</Text>
+                            <Text style={styles.Text}>Enviar</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
@@ -87,10 +87,10 @@ const styles = StyleSheet.create({
         marginTop: 15,
         padding: 10,
         borderRadius: 50,
-        backgroundColor: '#FF0090'
+        backgroundColor: '#4286f4'
     },
-    buttomText:{
-        fontSize: 20,
+    Text:{
+        fontSize: 17,
         color: '#FFF'
     },
     input:{
@@ -101,5 +101,11 @@ const styles = StyleSheet.create({
         borderColor: 'black',
         borderWidth: 1,
         borderRadius: 10
+    },
+    localizacao: {
+        backgroundColor: '#FFA500',
+        width: '90%',
+        borderRadius: 20,
+        alignItems: 'center'
     }
 })

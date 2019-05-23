@@ -2,38 +2,32 @@ import React from 'react'
 import {createBottomTabNavigator} from 'react-navigation'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
+import EnviaDados from './screens/EnviaDados'
+import Mapa from './screens/Mapa'
+
 const MenuRoutes ={
-    Feed: {
-        name: 'Feed',
-        screen: Feed,
+    EnviaDados: {
+        name: 'Enviar Dados',
+        screen: EnviaDados,
         navigationOptions:{
             title: 'Feed',
             tabBarIcon: ({tintColor}) =>
-                <Icon name='home' size={30} color={tintColor} />
+                <Icon name='camera' size={25} color={tintColor} />
         }
     },
-    Add: {
-        name: 'AddPhoto',
-        screen: Feed,
+    Mapa: {
+        name: 'Mapa',
+        screen: EnviaDados,
         navigationOptions:{
-            title: 'Add Picture',
+            title: 'Feed',
             tabBarIcon: ({tintColor}) =>
-                <Icon name='camera' size={30} color={tintColor} />
-        }
-    },
-    Profile: {
-        name: 'Profile',
-        screen: Feed,
-        navigationOptions:{
-            title: 'Profile',
-            tabBarIcon: ({tintColor}) =>
-                <Icon name='user' size={30} color={tintColor} />
+                <Icon name='map' size={25} color={tintColor} />
         }
     }
 }
 
 const MenuConfig = {
-    initialRouteName: 'Feed',
+    initialRouteName: 'EnviaDados',
     tabBarOptions:{
         showLabel: false,
     }

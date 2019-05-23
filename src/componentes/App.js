@@ -6,17 +6,13 @@
 
 import React, {Component} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import EnviaDados from '../screens/EnviaDados'
+import EnviaDados from '../screens/EnviaDados';
+import Main from '../Main'
 
 export default class App extends Component {
   render() {
     return (
-      <View style={styles.container}>
-        {/* <Text style={styles.welcome}>Hello World!</Text>
-        <Text style={styles.instructions}>Dados de Localização</Text>
-        <GeolocationExample /> */}
-        <EnviaDados/>
-      </View>
+      <Main/>
     );
   }
 }
