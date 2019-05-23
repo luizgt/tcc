@@ -17,7 +17,7 @@ const MenuRoutes ={
     },
     Mapa: {
         name: 'Mapa',
-        screen: EnviaDados,
+        screen: Mapa,
         navigationOptions:{
             title: 'Feed',
             tabBarIcon: ({tintColor}) =>
