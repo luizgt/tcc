@@ -48,3 +48,30 @@ const style = StyleSheet.create({
     fontSize: 15
   }
 })
+
+Dados = () => {
+  state = {
+    latitude: 0,
+    longitude: 0,
+    accuracy: 0,
+    erro: null,
+    altitude: -1,
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      this.setState({
+        latitude: pos.coords.latitude,
+        longitude: pos.coords.longitude,
+        accuracy: pos.coords.accuracy,
+        altitude: pos.coords.altitude,
+        // altitudeAccuracy: pos.coords.altitudeAccuracy,
+        error: null,
+      });
+    },
+    (error) => this.setState({ erro: error.message }),
+    { enableHighAccuracy: false, timeout: 20000, maximumAge: 1000 },
+  );
+
+  return (state)
+}

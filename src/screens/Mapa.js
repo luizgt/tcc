@@ -2,6 +2,11 @@ import MapView from 'react-native-maps'
 import React, {Component} from 'react'
 import {StyleSheet} from 'react-native'
 
+// import {Dados} from '../componentes/Localizacao'
+
+// const localizacao = <Dados/>
+// alert(localizacao.longitude)
+
 export default class Map extends Component{
     render(){
         return(
