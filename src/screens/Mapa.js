@@ -40,6 +40,10 @@ export default class Map extends Component{
            descricoes: descricao
         })
       })
+      .catch((error) => {
+        console.log("Falha ao conectar ao banco de dados!");
+        alert(error.message)
+      })
   }
 
   componentDidMount() {   //invocado imediatamente apos a construcao do componente
@@ -62,25 +66,36 @@ export default class Map extends Component{
       //  impressoes para teste
       //  console.warn(this.state.latitudes)
       //  console.warn(this.state.longitudes)
-      //  console.warn(this.state.descricoes)
+      //  console.warn(this.state.descricoes[])
 
-      let auxMarker = []
-      let auxMarco;
+      // const pietro = "Pietro"
+      // const chegando = `{"nome":"${pietro}"}` ;
+      // const json = JSON.parse(chegando);
+      // const atributo = 'nome';
+      // console.warn(json.nome);
+      // console.warn(json[atributo]);
+
+      // let coordenadas;
+      // let auxMarco;
+      
+      let marcadores = [];    //array com todos marcadores
+  
       for(let aux = 0; aux < this.state.latitudes.length; aux++){
-        auxMarco = 
-          {
-            'coordinate':{
-              'latitude': this.state.latitudes[aux],
-              'longitude': this.state.longitudes[aux]
-            },
-            'description': this.state.descricoes[aux],
-            'id': aux
-          }
-          auxMarco = JSON.stringify(auxMarco)
+        let marco = `{
+          "title": "MARKER",
+          "description": "${this.state.descricoes[aux]}",
+          "coordinates": {
+            "latitude": "${this.state.latitudes[aux]}",
+            "longitude": "${this.state.longitudes[aux]}"
+          },
+          "key": "${aux}"
+        }`;
+        let obj = JSON.parse(marco);     //transformando em obj
+        marcadores.push(obj);        //guardando o objeto no array
+        console.warn(marcadores[aux].key)
       }
-
-      // auxMarker = JSON.stringify(auxMarker)
-      console.warn(auxMarco)
+      // const marcador = JSON.parse(marcadores[0])
+      // console.warn(marcadores[0].key);
 
       // exemplo de markers
       // markers: [
@@ -113,11 +128,11 @@ export default class Map extends Component{
               longitudeDelta: 0.0121,
           }}>
             {/* <MapView.Marker
-                coordinate={auxMarker.coordinate}
+                coordinate={this.auxMarco}
                 title={"É tão lindo"}
-                description={auxMarker.description}
-            />               */}
-          </MapView>
+                // description={auxMarker.description}
+            />       */}       
+          </MapView> 
       )
     }
 }
