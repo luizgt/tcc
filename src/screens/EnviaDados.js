@@ -28,7 +28,7 @@ export default class EnviaDados extends Component{
             });
           },
           (error) => this.setState({ erro: error.message }),
-          { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
+          { enableHighAccuracy: false, timeout: 20000, maximumAge: 1000 },
         );
       }
 
@@ -64,6 +64,7 @@ export default class EnviaDados extends Component{
     }
 
     render(){
+        
         return(
             <ScrollView>
                 <View style={Estilo.container}>

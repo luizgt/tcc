@@ -26,6 +26,7 @@ app.get('/', function (req, res) {          //restosta ao get
         if (err) return console.log(err)
         
         res.send(results);
+        console.log('consulta ao banco!')
     })
 });
 
@@ -33,6 +34,6 @@ app.post('/', (req, res) => {               //resposta ao post
     db.collection('mapa').save(req.body, (err, result) => {
         if (err) return console.log(err)
 
-        console.log('Objeto salvo no banco de dados!')      //msg confirmacao
+        console.log('salvo no banco!')      //msg confirmacao
     })
 })

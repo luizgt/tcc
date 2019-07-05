@@ -7,6 +7,7 @@ import Mapa from './screens/Mapa'
 
 const MenuRoutes ={
     EnviaDados: {
+        teste: 1,
         name: 'Enviar Dados',
         screen: EnviaDados,
         navigationOptions:{
