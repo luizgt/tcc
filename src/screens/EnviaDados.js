@@ -11,26 +11,9 @@ export default class EnviaDados extends Component{
         latitude: 0,
         longitude: 0,
         accuracy: 0,
-        erro: null,
+        error: null,
         altitude: -1
     }
-  
-    componentDidMount() {   //invocado imediatamente apos a construcao do componente
-        navigator.geolocation.getCurrentPosition(
-          (pos) => {
-            this.setState({
-              latitude: pos.coords.latitude,
-              longitude: pos.coords.longitude,
-              accuracy: pos.coords.accuracy,
-              altitude: pos.coords.altitude,
-              // altitudeAccuracy: pos.coords.altitudeAccuracy,
-              error: null
-            });
-          },
-          (error) => this.setState({ erro: error.message }),
-          { enableHighAccuracy: false, timeout: 20000, maximumAge: 1000 },
-        );
-      }
 
     pickImage = () =>{
         ImagePicker.showImagePicker({
@@ -44,13 +27,15 @@ export default class EnviaDados extends Component{
         })
     }
 
-    save = ()=>{ 
+    save = () =>{ 
         this.getLocalizacao
-        fetch('http://192.168.0.12:3000/',{         //enviando dados para o server
+        fetch('http://192.168.0.12:3000/',{       //MUDAR PARA O IP DA MAQUINA (SERVER)
             method: 'POST',
             body: JSON.stringify({ 
-                lat: this.state.latitude, 
-                lnt: this.state.longitude, 
+                coordinates:{
+                    latitude: this.state.latitude, 
+                    longitude: this.state.longitude, 
+                },
                 acuracia: this.state.accuracy, 
                 altitude: this.state.altitude,
                 descricao: this.state.comment, 
@@ -63,8 +48,28 @@ export default class EnviaDados extends Component{
         }).catch(error => console.log(error));
     }
 
+    getLocalizacao(){       //busca as coordenadas para atualizar a posicao dos pontos
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+              this.setState({
+                latitude: pos.coords.latitude,
+                longitude: pos.coords.longitude,
+                accuracy: pos.coords.accuracy,
+                altitude: pos.coords.altitude,
+                // altitudeAccuracy: pos.coords.altitudeAccuracy,
+                error: null
+              });
+            },
+            (error) => this.setState({ erro: error.message }),
+            { enableHighAccuracy: false,    //alta precisao
+                timeout: 20000,             //tempo para executar antes de retornar erro
+                maximumAge: 1000 },         //tempo permitido de cache do dispositivo
+        )
+    }
+
     render(){
-        
+        this.getLocalizacao();      // enquanto a localização for atualizada atualiza a renderizacao
+
         return(
             <ScrollView>
                 <View style={Estilo.container}>
@@ -79,10 +84,12 @@ export default class EnviaDados extends Component{
                         style={Estilo.input} value={this.state.comment}
                         onChangeText={comment => this.setState({ comment })}/>
                     <View style={Estilo.localizacao}>
-                        <Text style={Estilo.dados}>Latitude: {this.state.latitude}</Text>
-                        <Text style={Estilo.dados}>Longitude: {this.state.longitude}</Text>
-                        <Text style={Estilo.dados}>Acuracia: {this.state.accuracy}</Text>
-                        <Text style={Estilo.dados}>Altitude: {this.state.altitude}</Text>
+                        <View style={Estilo.coordenadas}>
+                            <Text style={Estilo.dados}>Latitude: {this.state.latitude}</Text>
+                            <Text style={Estilo.dados}>Longitude: {this.state.longitude}</Text>
+                            <Text style={Estilo.dados}>Acuracia: {this.state.accuracy}</Text>
+                            <Text style={Estilo.dados}>Altitude: {this.state.altitude}</Text>
+                        </View>
                     </View>
                     <TouchableOpacity onPress={this.save}
                         style={Estilo.buttomEnviar}>

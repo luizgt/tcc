@@ -51,11 +51,19 @@ export default StyleSheet.create({
         borderWidth: 1,
         borderRadius: 10
     },
+    coordenadas: {
+        backgroundColor: '#FFF',
+        width: '90%',
+        // display:'flex',
+        borderRadius: 20,
+        alignItems: 'center'
+    },
     localizacao: {
         backgroundColor: '#FFA500',
         width: '90%',
         borderRadius: 20,
-        alignItems: 'center'
+        alignItems: 'center',
+        // display:'flex'
     },
     map: {
         position: 'absolute',

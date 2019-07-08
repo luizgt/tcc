@@ -17,11 +17,11 @@ MongoClient.connect(uri, (err, client) => { //conectando ao banco
     db = client.db('Cluster0')              // acessei minha tabela
 
     app.listen(3000, () => {                //servidor startado na porta 3000
-        console.log('Server running on port 3000!')         //msg confirmacao
+        console.log('Servidor rodando na porta: 3000!')         //msg confirmacao
     })
 })
 
-app.get('/', function (req, res) {          //restosta ao get
+app.get('/', function (req, res) {          //resposta ao get
     db.collection('mapa').find().toArray((err, results) => {
         if (err) return console.log(err)
         
