@@ -11,7 +11,6 @@ const MongoClient = require('mongodb').MongoClient;
 //url para acesso ao banco
 const uri = "mongodb+srv://luizzgt:jnU4132717luiz@cluster0-buhms.mongodb.net/test?retryWrites=true&w=majority"
 
-
 MongoClient.connect(uri, (err, client) => { //conectando ao banco
     if (err) return console.log(err)        //se a conecao for aceita, o servidor starta
     db = client.db('Cluster0')              // acessei minha tabela
@@ -22,6 +21,12 @@ MongoClient.connect(uri, (err, client) => { //conectando ao banco
 })
 
 app.get('/', function (req, res) {          //resposta ao get
+    
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE'); // If needed
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type'); // If needed
+    res.setHeader('Access-Control-Allow-Credentials', true); // If needed
+    
     db.collection('mapa').find().toArray((err, results) => {
         if (err) return console.log(err)
         
