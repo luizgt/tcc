@@ -1,19 +1,31 @@
-import MapView from 'react-native-maps'
+import MapView, {Marker, InfoWindow} from 'react-native-maps'
 import React, {Component} from 'react'
-import {StyleSheet} from 'react-native'
+import {StyleSheet, Image, Text, View} from 'react-native'
 
 export default class Map extends Component{
   state = {
-    latitude: 0,
-    longitude: 0,
-    descricoes:[],
-    markers: []
+    latitude: 0,      // para renderizar mapa
+    longitude: 0,     //
+    markers: [],      // para guardar os marcadores
+    isOpen: false
+  }
+
+  handleToggleOpen = () => {
+    this.setState({
+      isOpen: true
+    });
+  }
+
+  handleToggleClose = () => {
+    this.setState({
+      isOpen: false
+    });
   }
 
   componentDidMount() {   //invocado imediatamente apos a construcao do componente
     fetch('http://192.168.0.12:3000/')                            // consultando o banco e setando informacoes
     .then(response => response.json())                            //
-    .then(posicoes => this.setState({ markers: posicoes }))       //
+    .then(pontos => this.setState({ markers: pontos }))           //
 
     navigator.geolocation.getCurrentPosition(   //para renderizacao do mapa
       (pos) => {
@@ -32,17 +44,25 @@ export default class Map extends Component{
     return(
         <MapView style={styles.map} loadingEnabled={true} showsUserLocation={true}
         region={{
-            latitude: this.state.latitude,
-            longitude: this.state.longitude,
+            latitude: -22.11937,      //this.state.latitude,
+            longitude: -51.40329,     //this.state.longitude,
             latitudeDelta: 0.015,
             longitudeDelta: 0.0121,
         }}>
           {this.state.markers.map((marker, index) => (
-            <MapView.Marker key={index}
+            <Marker key={index}
               coordinate={marker.coordinates}
-              title={marker.descricao}
-            />
-          ))}     
+              // title={marker.descricao}
+              onClick={() => this.handleToggleOpen()}
+            >
+            <MapView.Callout>
+              <View style={{backgroundColor: '#FFF', display: 'flex', borderRadius: 20, alignItems: 'center'}}>
+                {/* <Image source={marker.imagem.uri+marker.imagem.base64}></Image> */}
+                <Text>{marker.descricao}</Text>
+              </View>
+            </MapView.Callout>
+            </Marker>
+          ))}
         </MapView> 
     )
   }

@@ -39,7 +39,7 @@ export default class EnviaDados extends Component{
                 acuracia: this.state.accuracy, 
                 altitude: this.state.altitude,
                 descricao: this.state.comment, 
-                // imagem: this.state.image
+                imagem: this.state.image
             }),
             headers: {"Content-Type": "application/json"}
         })
@@ -91,8 +91,7 @@ export default class EnviaDados extends Component{
                             <Text style={Estilo.dados}>Altitude: {this.state.altitude}</Text>
                         </View>
                     </View>
-                    <TouchableOpacity onPress={this.save}
-                        style={Estilo.buttomEnviar}>
+                    <TouchableOpacity onPress={this.save} style={Estilo.buttomEnviar}>
                             <Text style={Estilo.Text}>Enviar</Text>
                     </TouchableOpacity>
                 </View>
