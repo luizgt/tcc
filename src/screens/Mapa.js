@@ -1,6 +1,6 @@
 import MapView from 'react-native-maps'
 import React, {Component} from 'react'
-import {StyleSheet, Text} from 'react-native'
+import {StyleSheet} from 'react-native'
 
 export default class Map extends Component{
   state = {
@@ -18,8 +18,8 @@ export default class Map extends Component{
     navigator.geolocation.getCurrentPosition(   //para renderizacao do mapa
       (pos) => {
         this.setState({
-          latitude: pos.coords.latitude,
-          longitude: pos.coords.longitude,
+          latitude: pos.coords.latitude,        //usando coordenadas atuais
+          longitude: pos.coords.longitude,      //
           error: null,
         });
       },
