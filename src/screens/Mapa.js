@@ -10,23 +10,11 @@ export default class Map extends Component{
     isOpen: false
   }
 
-  handleToggleOpen = () => {
-    this.setState({
-      isOpen: true
-    });
-  }
-
-  handleToggleClose = () => {
-    this.setState({
-      isOpen: false
-    });
-  }
-
   componentDidMount() {   //invocado imediatamente apos a construcao do componente
-    fetch('http://192.168.0.12:3000/')                            // consultando o banco e setando informacoes
-    .then(response => response.json())                            //
-    .then(pontos => this.setState({ markers: pontos }))           //
-
+    fetch('http://192.168.0.12:3000/')                              // consultando o banco e setando informacoes
+    .then(response => response.json())                              //
+    .then(pontos => this.setState({ markers: pontos }))             //
+    .catch((err) => alert(err))
     navigator.geolocation.getCurrentPosition(   //para renderizacao do mapa
       (pos) => {
         this.setState({
@@ -39,7 +27,7 @@ export default class Map extends Component{
       { enableHighAccuracy: false, timeout: 1000, maximumAge: 1000 },
     );
   }
-  
+
   render(){
     return(
         <MapView style={styles.map} loadingEnabled={true} showsUserLocation={true}
@@ -53,11 +41,13 @@ export default class Map extends Component{
             <Marker key={index}
               coordinate={marker.coordinates}
               // title={marker.descricao}
-              onClick={() => this.handleToggleOpen()}
             >
             <MapView.Callout>
               <View style={{backgroundColor: '#FFF', display: 'flex', borderRadius: 20, alignItems: 'center'}}>
-                {/* <Image source={marker.imagem.uri+marker.imagem.base64}></Image> */}
+                <Image
+                  style={{width: 250, height: 300, margin: 10}}
+                   source={{uri: marker.imagem.uri}}
+                />
                 <Text>{marker.descricao}</Text>
               </View>
             </MapView.Callout>
