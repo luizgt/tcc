@@ -42,7 +42,7 @@ export default class Map extends Component{
         }}>
           {this.state.markers.map((marker, index) => (      //percorrendo array com os marcadores
             <Marker key={index} coordinate={marker.coordinates}>  
-              <MapView.Callout style={Estilos.infoCallOut}> {/* infoView */}
+              <MapView.Callout style={Estilos.infoCallOut}> 
                 <View style={Estilos.infoView}>
                   <Image
                     style={{width: 250, height: 300, margin: 10}}

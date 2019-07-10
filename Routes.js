@@ -3,8 +3,8 @@ const bodyParser = require('body-parser');
 const app = express();
 // app.use(bodyParser());
 
-app.use(bodyParser.json({limit: '50mb'}));
-app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+app.use(bodyParser.json({limit: '50mb'}));                          //comandos para limite de tamanho dos dados enviados
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));    //
 
 const MongoClient = require('mongodb').MongoClient;
 
