@@ -7,12 +7,13 @@ import Estilo from '../css/Estilos'
 export default class EnviaDados extends Component{
     state = {       //estado inicial
         image: null,
-        comment: '',
+        error: null,
         latitude: 0,
         longitude: 0,
         accuracy: 0,
-        error: null,
-        altitude: -1
+        altitude: -1,
+        descricao: '',
+        extensao: ''
     }
 
     pickImage = () =>{
@@ -27,25 +28,39 @@ export default class EnviaDados extends Component{
         })
     }
 
-    save = () =>{ 
-        this.getLocalizacao
-        fetch('http://192.168.0.12:3000/',{       //MUDAR PARA O IP DA MAQUINA (SERVER)
-            method: 'POST',
-            body: JSON.stringify({ 
-                coordinates:{
-                    latitude: this.state.latitude, 
-                    longitude: this.state.longitude, 
-                },
-                acuracia: this.state.accuracy, 
-                altitude: this.state.altitude,
-                descricao: this.state.comment, 
-                // imagem: this.state.image
-            }),
-            headers: {"Content-Type": "application/json"}
-        })
-        .then(function(response){
-            return response.json()
-        }).catch(error => console.log(error));
+    save = () =>{        
+        if(this.state.image == null){                   //para nao submeter uma imagem vazia ao servidor
+            alert('Imagem não pode ser vazia!')         //
+        }else{
+            var ext = '';                                               //variaveis para buscar extensao da imagem
+            var auxExtensao = this.state.image.uri.lastIndexOf('.')     //
+
+            for(let aux = auxExtensao+1; aux < this.state.image.uri.length; aux++)  //percorrendo o array para pegar a extensao
+                ext+= this.state.image.uri[aux];                                    //
+
+
+            fetch('http://192.168.0.12:3000/',{       //MUDAR PARA O IP DA MAQUINA (SERVER)
+                method: 'POST',
+                body: JSON.stringify({                      // DADOS PARA O BANCO
+                    coordinates:{                           //.coordenadas do ponto
+                        latitude: this.state.latitude,      //
+                        longitude: this.state.longitude,    //    
+                    },                                      //
+                    acuracia: this.state.accuracy,          //
+                    altitude: this.state.altitude,          //
+                    descricao: this.state.descricao,        //
+                    imagem: this.state.image,               //
+                    extensao: ext                           //.extensao do arquivo
+                }),
+                headers: {"Content-Type": "application/json"}
+            })
+            .then(function(response){
+                return response.json()
+            }).catch(error => console.log(error));
+            
+            alert('Dados enviados!')            //msg de confirmacao
+            this.setState({descricao: '', image: null}) //setando para valores iniciais
+        }
     }
 
     getLocalizacao(){       //busca as coordenadas para atualizar a posicao dos pontos
@@ -56,7 +71,6 @@ export default class EnviaDados extends Component{
                 longitude: pos.coords.longitude,
                 accuracy: pos.coords.accuracy,
                 altitude: pos.coords.altitude,
-                // altitudeAccuracy: pos.coords.altitudeAccuracy,
                 error: null
               });
             },
@@ -81,8 +95,9 @@ export default class EnviaDados extends Component{
                         <Text style={Estilo.Text}>Escolha a foto</Text>
                     </TouchableOpacity>
                     <TextInput placeholder="Descrição da imagem..."
-                        style={Estilo.input} value={this.state.comment}
-                        onChangeText={comment => this.setState({ comment })}/>
+                        style={Estilo.input} value={this.state.descricao}
+                        value={this.state.descricao}
+                        onChangeText={descricao => this.setState({ descricao })}/>
                     <View style={Estilo.localizacao}>
                         <View style={Estilo.coordenadas}>
                             <Text style={Estilo.dados}>Latitude: {this.state.latitude}</Text>
@@ -91,8 +106,7 @@ export default class EnviaDados extends Component{
                             <Text style={Estilo.dados}>Altitude: {this.state.altitude}</Text>
                         </View>
                     </View>
-                    <TouchableOpacity onPress={this.save}
-                        style={Estilo.buttomEnviar}>
+                    <TouchableOpacity onPress={this.save} style={Estilo.buttomEnviar}>
                             <Text style={Estilo.Text}>Enviar</Text>
                     </TouchableOpacity>
                 </View>
