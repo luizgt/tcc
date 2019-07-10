@@ -72,4 +72,28 @@ export default StyleSheet.create({
         right: 0,
         bottom: 0
     },
+    legenda:{
+        fontSize: 20,
+        fontWeight: "bold",
+        marginBottom: 10,
+        marginTop: 10,
+        color: '#000'
+    },
+    map: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0
+      },
+    infoView: {
+        backgroundColor: '#FFF',
+        display: 'flex', 
+        borderRadius: 20, 
+        alignItems: 'center'
+    },
+    infoCallOut: {
+        backgroundColor: '#FFA500',
+        borderRadius: 10
+    }
 })

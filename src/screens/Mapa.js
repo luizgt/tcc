@@ -1,21 +1,24 @@
-import MapView from 'react-native-maps'
+import MapView, {Marker} from 'react-native-maps'
 import React, {Component} from 'react'
-import {StyleSheet} from 'react-native'
+import {Image, Text, View} from 'react-native'
+
+import Estilos from '../css/Estilos'
 
 export default class Map extends Component{
   state = {
-    latitude: 0,
-    longitude: 0,
-    descricoes:[],
-    markers: []
+    latitude: 0,      // para renderizar mapa
+    longitude: 0,     //
+    markers: [],      // para guardar os marcadores
+    isOpen: false
   }
 
   componentDidMount() {   //invocado imediatamente apos a construcao do componente
-    fetch('http://192.168.0.12:3000/')                            // consultando o banco e setando informacoes
-    .then(response => response.json())                            //
-    .then(posicoes => this.setState({ markers: posicoes }))       //
-
-    navigator.geolocation.getCurrentPosition(   //para renderizacao do mapa
+    fetch('http://192.168.0.12:3000/')                              // consultando o banco e setando informacoes
+    .then(response => response.json())                              //
+    .then(pontos => this.setState({ markers: pontos }))             // atribuindo todos marcadores ao array de marcadores
+    .catch((err) => alert(err))                                     // exibindo erro
+    
+    navigator.geolocation.getCurrentPosition(   //pegando posicao para renderizacao do mapa
       (pos) => {
         this.setState({
           latitude: pos.coords.latitude,        //usando coordenadas atuais
@@ -27,33 +30,30 @@ export default class Map extends Component{
       { enableHighAccuracy: false, timeout: 1000, maximumAge: 1000 },
     );
   }
-  
+
   render(){
     return(
-        <MapView style={styles.map} loadingEnabled={true} showsUserLocation={true}
+        <MapView style={Estilos.map} loadingEnabled={true} showsUserLocation={true}
         region={{
             latitude: this.state.latitude,
             longitude: this.state.longitude,
-            latitudeDelta: 0.015,
-            longitudeDelta: 0.0121,
+            latitudeDelta: 0.015,     //Distance between the minimum and the 
+            longitudeDelta: 0.0121,   //maximum latitude/longitude to be displayed.
         }}>
-          {this.state.markers.map((marker, index) => (
-            <MapView.Marker key={index}
-              coordinate={marker.coordinates}
-              title={marker.descricao}
-            />
-          ))}     
+          {this.state.markers.map((marker, index) => (      //percorrendo array com os marcadores
+            <Marker key={index} coordinate={marker.coordinates}>  
+              <MapView.Callout style={Estilos.infoCallOut}> 
+                <View style={Estilos.infoView}>
+                  <Image
+                    style={{width: 250, height: 300, margin: 10}}
+                    source={{uri: `data:image/${marker.extensao};base64,${marker.imagem.base64}`}}
+                  />
+                  <Text style={Estilos.legenda}>{marker.descricao}</Text>
+                </View>
+              </MapView.Callout>
+            </Marker>
+          ))}
         </MapView> 
     )
   }
 }
-
-const styles = StyleSheet.create({
-    map: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0
-       },
-})
