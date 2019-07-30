@@ -13,7 +13,17 @@ export default class EnviaDados extends Component{
         accuracy: 0,
         altitude: -1,
         descricao: '',
-        extensao: ''
+        extensao: '',
+        formulario: {
+            pergunta0: 'teste'
+        }
+    }
+
+    componentDidMount(){
+        fetch('http://200.145.184.232:3013/formulario')                              // consultando o banco e setando informacoes
+        .then(response => response.json())                              //
+        .then(perguntas => this.setState({ formulario: perguntas }))             // atribuindo todos marcadores ao array de marcadores
+        .catch((err) => alert(err))                                    // exibindo erro
     }
 
     pickImage = () =>{
@@ -39,7 +49,7 @@ export default class EnviaDados extends Component{
                 ext+= this.state.image.uri[aux];                                    //
 
 
-            fetch('http://192.168.0.17:3013/',{       //MUDAR PARA O IP DA MAQUINA (SERVER)
+            fetch('http://200.145.184.232:3013/',{       //MUDAR PARA O IP DA MAQUINA (SERVER)
                 method: 'POST',
                 body: JSON.stringify({                      // DADOS PARA O BANCO
                     coordinates:{                           //.coordenadas do ponto
@@ -83,7 +93,7 @@ export default class EnviaDados extends Component{
 
     render(){
         this.getLocalizacao();      // enquanto a localização for atualizada atualiza a renderizacao
-
+        // alert(this.state.formulario);
         return(
             <ScrollView>
                 <View style={Estilo.container}>
@@ -100,9 +110,7 @@ export default class EnviaDados extends Component{
                         onChangeText={descricao => this.setState({ descricao })}/> */}
 
                     <View style={Estilo.formulario}>
-                        {
-                            
-                        }
+                        <Text>{this.state.formulario.pergunta1}</Text>
                     </View>
                     
                     <View style={Estilo.localizacao}>

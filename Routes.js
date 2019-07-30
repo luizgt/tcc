@@ -29,7 +29,7 @@ app.get('/', function (req, res) {          //resposta ao get
         if (err) return console.log(err)
 
         res.send(results);
-        console.log('consulta ao banco!')
+        console.log('consulta à coleção: mapas!')
     })
 });
 
@@ -43,7 +43,7 @@ app.get('/formulario', function (req, res) {          //resposta ao get
         if (err) return console.log(err)
 
         res.send(results);
-        console.log('consulta ao banco!')
+        console.log('consulta à coleção: formulário!')
     })
 });
 

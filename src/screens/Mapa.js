@@ -32,7 +32,7 @@ export default class Map extends Component{
   }
 
   getDados(){
-    fetch('http://200.145.184.232:3013/')                              // consultando o banco e setando informacoes
+    fetch('http://200.145.184.232:3013/')                           // consultando o banco e setando informacoes
     .then(response => response.json())                              //
     .then(pontos => this.setState({ markers: pontos }))             // atribuindo todos marcadores ao array de marcadores
     .catch((err) => alert(err))                                     // exibindo erro
