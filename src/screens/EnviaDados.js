@@ -39,7 +39,7 @@ export default class EnviaDados extends Component{
                 ext+= this.state.image.uri[aux];                                    //
 
 
-            fetch('http://192.168.0.12:3000/',{       //MUDAR PARA O IP DA MAQUINA (SERVER)
+            fetch('http://192.168.0.17:3013/',{       //MUDAR PARA O IP DA MAQUINA (SERVER)
                 method: 'POST',
                 body: JSON.stringify({                      // DADOS PARA O BANCO
                     coordinates:{                           //.coordenadas do ponto
@@ -94,10 +94,17 @@ export default class EnviaDados extends Component{
                     <TouchableOpacity onPress={this.pickImage} style={Estilo.buttom}>
                         <Text style={Estilo.Text}>Escolha a foto</Text>
                     </TouchableOpacity>
-                    <TextInput placeholder="Descrição da imagem..."
+                    {/* <TextInput placeholder="Descrição da imagem..."
                         style={Estilo.input} value={this.state.descricao}
                         value={this.state.descricao}
-                        onChangeText={descricao => this.setState({ descricao })}/>
+                        onChangeText={descricao => this.setState({ descricao })}/> */}
+
+                    <View style={Estilo.formulario}>
+                        {
+                            
+                        }
+                    </View>
+                    
                     <View style={Estilo.localizacao}>
                         <View style={Estilo.coordenadas}>
                             <Text style={Estilo.dados}>Latitude: {this.state.latitude}</Text>

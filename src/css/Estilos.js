@@ -95,5 +95,9 @@ export default StyleSheet.create({
     infoCallOut: {
         backgroundColor: '#FFA500',
         borderRadius: 10
+    },
+    formulario:{
+        backgroundColor: '#FFF',
+        padding: 50,
     }
 })
