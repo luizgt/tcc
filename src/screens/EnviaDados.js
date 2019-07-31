@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {View, Text, TouchableOpacity, TextInput, Image, ScrollView } from 'react-native'
 import ImagePicker from 'react-native-image-picker'
+// import { ButtonGroup } from 'react-native-elements'
 
 import Estilo from '../css/Estilos'
 
@@ -14,15 +15,15 @@ export default class EnviaDados extends Component{
         altitude: -1,
         descricao: '',
         extensao: '',
-        formulario: {
-            pergunta0: 'teste'
-        }
+        formulario: []
     }
 
     componentDidMount(){
         fetch('http://200.145.184.232:3013/formulario')                              // consultando o banco e setando informacoes
         .then(response => response.json())                              //
-        .then(perguntas => this.setState({ formulario: perguntas }))             // atribuindo todos marcadores ao array de marcadores
+        .then(perguntas => {
+            this.setState({formulario: perguntas})
+        })             // atribuindo todos marcadores ao array de marcadores
         .catch((err) => alert(err))                                    // exibindo erro
     }
 
@@ -94,6 +95,7 @@ export default class EnviaDados extends Component{
     render(){
         this.getLocalizacao();      // enquanto a localização for atualizada atualiza a renderizacao
         // alert(this.state.formulario);
+        // var perguntas = this.state.formulario.pergunta;
         return(
             <ScrollView>
                 <View style={Estilo.container}>
@@ -104,15 +106,14 @@ export default class EnviaDados extends Component{
                     <TouchableOpacity onPress={this.pickImage} style={Estilo.buttom}>
                         <Text style={Estilo.Text}>Escolha a foto</Text>
                     </TouchableOpacity>
-                    {/* <TextInput placeholder="Descrição da imagem..."
-                        style={Estilo.input} value={this.state.descricao}
-                        value={this.state.descricao}
-                        onChangeText={descricao => this.setState({ descricao })}/> */}
 
-                    <View style={Estilo.formulario}>
-                        <Text>{this.state.formulario.pergunta1}</Text>
-                    </View>
-                    
+                    {this.state.formulario.map((pergunta,index) => (
+                        <View style={Estilo.formulario} key={index}>
+                            <Text style={Estilo.pergunta}>{pergunta.pergunta}</Text>
+                            
+                        </View>
+                    ))}
+      
                     <View style={Estilo.localizacao}>
                         <View style={Estilo.coordenadas}>
                             <Text style={Estilo.dados}>Latitude: {this.state.latitude}</Text>

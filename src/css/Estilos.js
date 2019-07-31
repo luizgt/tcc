@@ -97,7 +97,11 @@ export default StyleSheet.create({
         borderRadius: 10
     },
     formulario:{
-        backgroundColor: '#FFF',
-        padding: 50,
+        padding: 15,
+    },
+    pergunta:{
+        fontSize:15,
+        marginBottom:5,
+        color: '#000',
     }
 })
