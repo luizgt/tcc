@@ -95,5 +95,13 @@ export default StyleSheet.create({
     infoCallOut: {
         backgroundColor: '#FFA500',
         borderRadius: 10
+    },
+    formulario:{
+        padding: 15,
+    },
+    pergunta:{
+        fontSize:15,
+        marginBottom:5,
+        color: '#000',
     }
 })

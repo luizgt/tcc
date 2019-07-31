@@ -13,7 +13,7 @@ export default class Map extends Component{
   }
 
   componentDidMount() {   //invocado imediatamente apos a construcao do componente
-    fetch('http://192.168.0.12:3000/')                              // consultando o banco e setando informacoes
+    fetch('http://200.145.184.232:3013/')                              // consultando o banco e setando informacoes
     .then(response => response.json())                              //
     .then(pontos => this.setState({ markers: pontos }))             // atribuindo todos marcadores ao array de marcadores
     .catch((err) => alert(err))                                     // exibindo erro
@@ -21,14 +21,21 @@ export default class Map extends Component{
     navigator.geolocation.getCurrentPosition(   //pegando posicao para renderizacao do mapa
       (pos) => {
         this.setState({
-          latitude: pos.coords.latitude,        //usando coordenadas atuais
-          longitude: pos.coords.longitude,      //
+          latitude: pos.coords.latitude,        // -22.1221069,
+          longitude: pos.coords.longitude,      //-51.4070715
           error: null,
         });
       },
       (error) => this.setState({ erro: error.message }),
       { enableHighAccuracy: false, timeout: 1000, maximumAge: 1000 },
     );
+  }
+
+  getDados(){
+    fetch('http://200.145.184.232:3013/')                           // consultando o banco e setando informacoes
+    .then(response => response.json())                              //
+    .then(pontos => this.setState({ markers: pontos }))             // atribuindo todos marcadores ao array de marcadores
+    .catch((err) => alert(err))                                     // exibindo erro
   }
 
   render(){

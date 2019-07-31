@@ -11,7 +11,7 @@ const MenuRoutes ={
         name: 'Enviar Dados',
         screen: EnviaDados,
         navigationOptions:{
-            title: 'Feed',
+            title: 'Enviar',
             tabBarIcon: ({tintColor}) =>
                 <Icon name='camera' size={25} color={tintColor} />
         }
@@ -20,7 +20,7 @@ const MenuRoutes ={
         name: 'Mapa',
         screen: Mapa,
         navigationOptions:{
-            title: 'Feed',
+            title: 'Mapa',
             tabBarIcon: ({tintColor}) =>
                 <Icon name='map' size={25} color={tintColor} />
         }
