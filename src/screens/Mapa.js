@@ -56,6 +56,12 @@ export default class Map extends Component{
                     source={{uri: `data:image/${marker.extensao};base64,${marker.imagem.base64}`}}
                   />
                   <Text style={Estilos.legenda}>{marker.descricao}</Text>
+                  {/* {this.state.markers.perguntas.map((pergunta,index) => (
+                    <View>
+                      <Text>{pergunta}</Text>
+                      <Text>{this.state.markers.resposta[index]}</Text>
+                    </View>
+                  ))} */}
                 </View>
               </MapView.Callout>
             </Marker>

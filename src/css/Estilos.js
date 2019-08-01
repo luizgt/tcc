@@ -97,11 +97,30 @@ export default StyleSheet.create({
         borderRadius: 10
     },
     formulario:{
-        padding: 15,
+        marginTop: 5,
+        marginBottom: 5,
     },
-    pergunta:{
-        fontSize:15,
+    perguntasView: {
+        marginTop: 10,
+        marginBottom: 10,
+        width: '100%'
+    },
+    perguntaText:{
+        fontSize: 20,
+        marginLeft: 20,
         marginBottom:5,
         color: '#000',
+    },
+    botoesView:{
+        display:'flex', 
+        flexDirection:'column',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    botoes:{
+        display:'flex',
+        fontSize: 17,
+        display: 'flex',
+        flexDirection: 'row'
     }
 })

@@ -13,6 +13,7 @@
     "mongodb": "^3.2.7",
     "react": "16.8.3",
     "react-native": "0.59.8",
+    "react-native-btr": "^1.1.4",
     "react-native-gravatar": "1.0.2",
     "react-native-image-picker": "^0.27.1",
     "react-native-maps": "^0.24.2",
