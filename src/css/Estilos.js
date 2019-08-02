@@ -122,5 +122,8 @@ export default StyleSheet.create({
         fontSize: 17,
         display: 'flex',
         flexDirection: 'row'
+    },
+    dadosMag:{
+        marginTop: 10,
     }
 })

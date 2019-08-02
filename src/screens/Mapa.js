@@ -9,26 +9,35 @@ export default class Map extends Component{
     latitude: 0,      // para renderizar mapa
     longitude: 0,     //
     markers: [],      // para guardar os marcadores
-    isOpen: false
+
+    region: {
+      latitude: -22.1221069,
+      longitude: -51.4070715,
+      latitudeDelta: 0.095,
+      longitudeDelta: 0.0121,
+    }
   }
 
-  componentDidMount() {   //invocado imediatamente apos a construcao do componente
-    fetch('http://200.145.184.232:3013/')                              // consultando o banco e setando informacoes
-    .then(response => response.json())                              //
-    .then(pontos => this.setState({ markers: pontos }))             // atribuindo todos marcadores ao array de marcadores
-    .catch((err) => alert(err))                                     // exibindo erro
-    
+  componentDidMount() {   //invocado imediatamente apos a construcao do componente 
     navigator.geolocation.getCurrentPosition(   //pegando posicao para renderizacao do mapa
       (pos) => {
         this.setState({
-          latitude: pos.coords.latitude,        // -22.1221069,
-          longitude: pos.coords.longitude,      //-51.4070715
-          error: null,
+          region:{
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.latitude,
+            latitudeDelta: 0.015,
+            longitudeDelta: 0.0121
+          }
         });
       },
       (error) => this.setState({ erro: error.message }),
-      { enableHighAccuracy: false, timeout: 1000, maximumAge: 1000 },
-    );
+      { enableHighAccuracy: false, timeout: 1000, maximumAge: 10 },
+      );
+
+      fetch('http://200.145.184.232:3013/')                              // consultando o banco e setando informacoes
+      .then(response => response.json())                              //
+      .then(pontos => this.setState({ markers: pontos }))             // atribuindo todos marcadores ao array de marcadores
+      .catch((err) => alert(err))                                     // exibindo erro
   }
 
   getDados(){
@@ -39,14 +48,11 @@ export default class Map extends Component{
   }
 
   render(){
+    // mapType={'satellite'}
     return(
-        <MapView style={Estilos.map} loadingEnabled={true} showsUserLocation={true}
-        region={{
-            latitude: this.state.latitude,
-            longitude: this.state.longitude,
-            latitudeDelta: 0.015,     //Distance between the minimum and the 
-            longitudeDelta: 0.0121,   //maximum latitude/longitude to be displayed.
-        }}>
+        <MapView style={Estilos.map} showsMyLocationButton={true} showsUserLocation={true} 
+          followsUserLocation={true} initialRegion={this.state.region} loadingEnabled={true}
+        >
           {this.state.markers.map((marker, index) => (      //percorrendo array com os marcadores
             <Marker key={index} coordinate={marker.coordinates}>  
               <MapView.Callout style={Estilos.infoCallOut}> 

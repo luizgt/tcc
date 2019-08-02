@@ -2,6 +2,15 @@ import React, {Component} from 'react'
 import {View, Text, TouchableOpacity, TextInput, Image, ScrollView } from 'react-native'
 import ImagePicker from 'react-native-image-picker'
 import { RadioGroup } from 'react-native-btr';
+import { map, filter } from "rxjs/operators";
+import {
+    accelerometer,
+    gyroscope,
+    magnetometer,
+    barometer,
+    setUpdateIntervalForType,
+    SensorTypes
+  } from "react-native-sensors";
 
 import Estilo from '../css/Estilos'
 
@@ -57,6 +66,12 @@ export default class EnviaDados extends Component{
             maxWidth: 800,
         }, res=>{
             if(!res.didCancel){ //se a opção nao foi cancelada
+                setUpdateIntervalForType(SensorTypes.magnetometer, 10000);
+                const subscription = magnetometer.subscribe(({ x, y, z }) => {          
+                    this.setState({
+                        magX: x, magY: y, magZ: z
+                    })
+                });
                 this.setState({image: {uri: res.uri, base64: res.data}})    //setando imagem
             }
         })
@@ -86,7 +101,12 @@ export default class EnviaDados extends Component{
                     respostas:this.state.respostas,         /////
                     descricao: this.state.descricao,        /////
                     imagem: this.state.image,               //
-                    extensao: ext                           //.extensao do arquivo
+                    extensao: ext,                           //.extensao do arquivo
+                    magnetometro:{
+                        x: this.state.magX,
+                        y: this.state.magY,
+                        z: this.state.magZ,
+                    }
                 }),
                 headers: {"Content-Type": "application/json"}
             })
@@ -172,6 +192,11 @@ export default class EnviaDados extends Component{
                             <Text style={Estilo.dados}>Longitude: {this.state.longitude}</Text>
                             <Text style={Estilo.dados}>Acuracia: {this.state.accuracy}</Text>
                             <Text style={Estilo.dados}>Altitude: {this.state.altitude}</Text>
+                            <View style={Estilo.dadosMag}>
+                                <Text style={Estilo.dados}>X: {this.state.magX}</Text>
+                                <Text style={Estilo.dados}>Y: {this.state.magY}</Text>
+                                <Text style={Estilo.dados}>Z: {this.state.magZ}</Text>
+                            </View>
                         </View>
                     </View>
                     
