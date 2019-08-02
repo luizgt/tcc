@@ -2,12 +2,12 @@ import React, {Component} from 'react'
 import {View, Text, TouchableOpacity, TextInput, Image, ScrollView } from 'react-native'
 import ImagePicker from 'react-native-image-picker'
 import { RadioGroup } from 'react-native-btr';
-import { map, filter } from "rxjs/operators";
+
 import {
-    accelerometer,
-    gyroscope,
+    // accelerometer,
+    // gyroscope,
+    // barometer,
     magnetometer,
-    barometer,
     setUpdateIntervalForType,
     SensorTypes
   } from "react-native-sensors";
@@ -27,6 +27,8 @@ export default class EnviaDados extends Component{
         formulario: [],
         perguntas:[],
         respostas:[],
+
+        selected: false,
 
         radioButtons: [
             {
@@ -60,19 +62,20 @@ export default class EnviaDados extends Component{
     }
 
     pickImage = () =>{
-        ImagePicker.showImagePicker({
+        // ImagePicker.showImagePicker
+        ImagePicker.launchCamera({
             tittle: 'Escolha a Imagem',
             maxHeight: 600,
             maxWidth: 800,
         }, res=>{
             if(!res.didCancel){ //se a opção nao foi cancelada
-                setUpdateIntervalForType(SensorTypes.magnetometer, 10000);
                 const subscription = magnetometer.subscribe(({ x, y, z }) => {          
                     this.setState({
                         magX: x, magY: y, magZ: z
                     })
                 });
                 this.setState({image: {uri: res.uri, base64: res.data}})    //setando imagem
+                setUpdateIntervalForType(SensorTypes.magnetometer, 10000);
             }
         })
     }
@@ -123,7 +126,6 @@ export default class EnviaDados extends Component{
         var auxPerguntas = this.state.perguntas;
         var auxRespostas = this.state.respostas;
 
-
         let selectedItem = this.state.radioButtons.find(e => e.checked == true);
         selectedItem = selectedItem ? selectedItem.value : this.state.radioButtons.value;
 
@@ -148,7 +150,7 @@ export default class EnviaDados extends Component{
               });
             },
             (error) => this.setState({ erro: error.message }),
-            { enableHighAccuracy: false,    //alta precisao
+            {   enableHighAccuracy: false,    //alta precisao
                 timeout: 20000,             //tempo para executar antes de retornar erro
                 maximumAge: 1000 },         //tempo permitido de cache do dispositivo
         )
@@ -176,6 +178,7 @@ export default class EnviaDados extends Component{
                                 <Text style={Estilo.perguntaText}>{pergunta.pergunta}</Text>
                                 <View style={Estilo.botoesView}>
                                     <RadioGroup
+                                        selected={this.state.selected}
                                         style={Estilo.botoes}
                                         radioButtons={this.state.radioButtons}
                                         onPress={radioButtons => this.salvarResposta(index, pergunta.pergunta)}

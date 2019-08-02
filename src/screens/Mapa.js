@@ -32,12 +32,11 @@ export default class Map extends Component{
       },
       (error) => this.setState({ erro: error.message }),
       { enableHighAccuracy: false, timeout: 1000, maximumAge: 10 },
-      );
-
-      fetch('http://200.145.184.232:3013/')                              // consultando o banco e setando informacoes
-      .then(response => response.json())                              //
-      .then(pontos => this.setState({ markers: pontos }))             // atribuindo todos marcadores ao array de marcadores
-      .catch((err) => alert(err))                                     // exibindo erro
+    );
+    fetch('http://200.145.184.232:3013/')                       // consultando o banco e setando informacoes
+    .then(response => response.json())                          //
+    .then(markers => this.setState({ markers }))                // atribuindo todos marcadores ao array de marcadores
+    .catch((err) => alert(err))                                 // exibindo erro
   }
 
   getDados(){
@@ -49,6 +48,7 @@ export default class Map extends Component{
 
   render(){
     // mapType={'satellite'}
+
     return(
         <MapView style={Estilos.map} showsMyLocationButton={true} showsUserLocation={true} 
           followsUserLocation={true} initialRegion={this.state.region} loadingEnabled={true}
@@ -62,12 +62,11 @@ export default class Map extends Component{
                     source={{uri: `data:image/${marker.extensao};base64,${marker.imagem.base64}`}}
                   />
                   <Text style={Estilos.legenda}>{marker.descricao}</Text>
-                  {/* {this.state.markers.perguntas.map((pergunta,index) => (
-                    <View>
-                      <Text>{pergunta}</Text>
-                      <Text>{this.state.markers.resposta[index]}</Text>
-                    </View>
-                  ))} */}
+                  {/* <Text style={Estilos.legenda}>{marker.perguntas}</Text>
+                  <Text style={Estilos.legenda}>{marker.respostas}</Text>
+                  <Text style={Estilos.legenda}>{marker.magnetometro.x}</Text>
+                  <Text style={Estilos.legenda}>{marker.magnetometro.y}</Text>
+                  <Text style={Estilos.legenda}>{marker.magnetometro.z}</Text> */}
                 </View>
               </MapView.Callout>
             </Marker>
