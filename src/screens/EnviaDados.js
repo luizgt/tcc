@@ -28,6 +28,8 @@ export default class EnviaDados extends Component{
         perguntas:[],
         respostas:[],
 
+        magnetometer: '0',
+
         selected: false,
 
         radioButtons: [
@@ -59,9 +61,11 @@ export default class EnviaDados extends Component{
             this.setState({formulario: perguntas})
         })             // atribuindo todos marcadores ao array de marcadores
         .catch((err) => alert(err))                                    // exibindo erro
+
+        this._toggle();
     }
 
-    pickImage = () =>{
+    pickImage = async () =>{
         // ImagePicker.showImagePicker
         ImagePicker.launchCamera({
             tittle: 'Escolha a Imagem',
@@ -69,13 +73,10 @@ export default class EnviaDados extends Component{
             maxWidth: 800,
         }, res=>{
             if(!res.didCancel){ //se a opção nao foi cancelada
-                const subscription = magnetometer.subscribe(({ x, y, z }) => {          
-                    this.setState({
-                        magX: x, magY: y, magZ: z
-                    })
+                magnetometer.subscribe(({ x, y, z }) => {          
+                    this.setState({ magX: x, magY: y, magZ: z })
                 });
                 this.setState({image: {uri: res.uri, base64: res.data}})    //setando imagem
-                setUpdateIntervalForType(SensorTypes.magnetometer, 10000);
             }
         })
     }
@@ -100,11 +101,12 @@ export default class EnviaDados extends Component{
                     },                                      //
                     acuracia: this.state.accuracy,          //
                     altitude: this.state.altitude,          //
-                    perguntas: this.state.perguntas,        /////
-                    respostas:this.state.respostas,         /////
-                    descricao: this.state.descricao,        /////
+                    perguntas: this.state.perguntas,        //
+                    respostas:this.state.respostas,         //
+                    descricao: this.state.descricao,        //
                     imagem: this.state.image,               //
-                    extensao: ext,                           //.extensao do arquivo
+                    extensao: ext,                          //.extensao do arquivo
+                    direcao: this.magnetometro,
                     magnetometro:{
                         x: this.state.magX,
                         y: this.state.magY,
@@ -119,8 +121,8 @@ export default class EnviaDados extends Component{
             
             alert('Dados enviados!')            //msg de confirmacao
             this.setState({descricao: '', image: null}) //setando para valores iniciais
-        }
-    }
+        }//else
+    }//salvar
 
     salvarResposta(index, pergunta){
         var auxPerguntas = this.state.perguntas;
@@ -135,8 +137,62 @@ export default class EnviaDados extends Component{
         this.setState({
             perguntas: auxPerguntas,
             respostas: auxRespostas
-        })
+        });
     }
+
+/////////////////////////////////////////////////////////////////////////
+    _toggle = () => {
+        if (this._subscription) {
+            this._unsubscribe();
+        } else {
+            this._subscribe();
+        }
+    };
+
+    _subscribe = async () => {
+        setUpdateIntervalForType(SensorTypes.magnetometer, 1000);
+        this._subscription = magnetometer.subscribe(
+            sensorData => this.setState({magnetometer: this._angle(sensorData)}),
+            error => console.log("The sensor is not available"),
+        );
+    };
+    
+    _unsubscribe = () => {
+    this._subscription && this._subscription.unsubscribe();
+    this._subscription = null;
+    };
+    
+    _angle = magnetometer => {
+        let angle = 0;
+        if (magnetometer) {
+            let {x, y} = magnetometer;
+            if (Math.atan2(y, x) >= 0) {
+            angle = Math.atan2(y, x) * (180 / Math.PI);
+            } else {
+            angle = (Math.atan2(y, x) + 2 * Math.PI) * (180 / Math.PI);
+            }
+        }
+        return Math.round(angle);
+    };
+
+    _direction = degree => {
+        if (degree >= 22.5 && degree < 67.5) return "Nordeste";
+         else if (degree >= 67.5 && degree < 112.5)  return "Leste";
+         else if (degree >= 112.5 && degree < 157.5) return "Sudeste";
+         else if (degree >= 157.5 && degree < 202.5) return "Sul";
+         else if (degree >= 202.5 && degree < 247.5) return "Sudoeste";
+         else if (degree >= 247.5 && degree < 292.5) return "Oeste";
+         else if (degree >= 292.5 && degree < 337.5) return "Noroeste";
+         else return "Norte";
+    };
+    
+    // Match the device top with pointer 0° degree. (By default 0° starts from the right of the device.)
+    _degree = magnetometer => {
+        return magnetometer - 90 >= 0
+            ? magnetometer - 90
+            : magnetometer + 271;
+    };
+/////////////////////////////////////////////////////////////////////////
 
     getLocalizacao(){       //busca as coordenadas para atualizar a posicao dos pontos
         navigator.geolocation.getCurrentPosition(
@@ -196,7 +252,8 @@ export default class EnviaDados extends Component{
                             <Text style={Estilo.dados}>Acuracia: {this.state.accuracy}</Text>
                             <Text style={Estilo.dados}>Altitude: {this.state.altitude}</Text>
                             <View style={Estilo.dadosMag}>
-                                <Text style={Estilo.dados}>X: {this.state.magX}</Text>
+                                <Text style={Estilo.dados}>Direção: {this._direction(this._degree(this.state.magnetometer))}</Text>
+                                <Text style={Estilo.dados}>X:  {this.state.magX}</Text>
                                 <Text style={Estilo.dados}>Y: {this.state.magY}</Text>
                                 <Text style={Estilo.dados}>Z: {this.state.magZ}</Text>
                             </View>
