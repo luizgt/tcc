@@ -51,7 +51,7 @@ export default class EnviaDados extends Component{
               color: '#FF8F00',
               size: 13,
             }
-          ]
+        ]
     }
 
     componentDidMount(){
@@ -77,6 +77,16 @@ export default class EnviaDados extends Component{
                     this.setState({ magX: x, magY: y, magZ: z })
                 });
                 this.setState({image: {uri: res.uri, base64: res.data}})    //setando imagem
+
+                var date = new Date().getDate(); //Current Date
+                var month = new Date().getMonth() + 1; //Current Month
+                var year = new Date().getFullYear(); //Current Year
+                var hours = new Date().getHours(); //Current Hours
+                var min = new Date().getMinutes(); //Current Minutes
+                var sec = new Date().getSeconds(); //Current Seconds
+                this.setState({
+                    date: date + '/' + month + '/' + year + ' ' + hours + ':' + min + ':' + sec,
+                });
             }
         })
     }
@@ -90,7 +100,6 @@ export default class EnviaDados extends Component{
 
             for(let aux = auxExtensao+1; aux < this.state.image.uri.length; aux++)  //percorrendo o array para pegar a extensao
                 ext+= this.state.image.uri[aux];                                    //
-
 
             fetch('http://200.145.184.232:3013/',{       //MUDAR PARA O IP DA MAQUINA (SERVER)
                 method: 'POST',
@@ -106,7 +115,8 @@ export default class EnviaDados extends Component{
                     descricao: this.state.descricao,        //
                     imagem: this.state.image,               //
                     extensao: ext,                          //.extensao do arquivo
-                    direcao: this.magnetometro,
+                    direcao: this.state.magnetometer,       ////
+                    dataHora: this.state.date,              ////
                     magnetometro:{
                         x: this.state.magX,
                         y: this.state.magY,
@@ -194,6 +204,8 @@ export default class EnviaDados extends Component{
     };
 /////////////////////////////////////////////////////////////////////////
 
+
+
     getLocalizacao(){       //busca as coordenadas para atualizar a posicao dos pontos
         navigator.geolocation.getCurrentPosition(
             (pos) => {
@@ -253,9 +265,13 @@ export default class EnviaDados extends Component{
                             <Text style={Estilo.dados}>Altitude: {this.state.altitude}</Text>
                             <View style={Estilo.dadosMag}>
                                 <Text style={Estilo.dados}>Direção: {this._direction(this._degree(this.state.magnetometer))}</Text>
+                                <Text style={Estilo.dados}>Direção: {this._degree(this.state.magnetometer)}</Text>
                                 <Text style={Estilo.dados}>X:  {this.state.magX}</Text>
                                 <Text style={Estilo.dados}>Y: {this.state.magY}</Text>
                                 <Text style={Estilo.dados}>Z: {this.state.magZ}</Text>
+                            </View>
+                            <View style={Estilo.dadosMag}>
+                                <Text style={Estilo.dados}>{this.state.date}</Text>
                             </View>
                         </View>
                     </View>

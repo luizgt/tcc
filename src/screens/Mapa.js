@@ -50,7 +50,7 @@ export default class Map extends Component{
     // mapType={'satellite'}
 
     return(
-        <MapView style={Estilos.map} showsMyLocationButton={true} showsUserLocation={true} 
+        <MapView style={Estilos.map} showsMyLocationButton={true} showsUserLocation={true}
           followsUserLocation={true} initialRegion={this.state.region} loadingEnabled={true}
         >
           {this.state.markers.map((marker, index) => (      //percorrendo array com os marcadores
