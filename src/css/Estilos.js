@@ -38,6 +38,14 @@ export default StyleSheet.create({
         borderRadius: 50,
         backgroundColor: '#4286f4'
     },
+    buttomAtualizarMapa:{
+        marginTop: 15,
+        marginLeft: 15,
+        padding: 10,
+        borderRadius: 50,
+        backgroundColor: '#4286f4',
+        width: 85
+    },
     Text:{
         fontSize: 17,
         color: '#FFF'

@@ -76,6 +76,7 @@ export default class EnviaDados extends Component{
                 magnetometer.subscribe(({ x, y, z }) => {          
                     this.setState({ magX: x, magY: y, magZ: z })
                 });
+                
                 this.setState({image: {uri: res.uri, base64: res.data}})    //setando imagem
 
                 var date = new Date().getDate(); //Current Date
@@ -115,7 +116,7 @@ export default class EnviaDados extends Component{
                     descricao: this.state.descricao,        //
                     imagem: this.state.image,               //
                     extensao: ext,                          //.extensao do arquivo
-                    direcao: this.state.magnetometer,       ////
+                    direcao: this._degree(this.state.magnetometer),       ////
                     dataHora: this.state.date,              ////
                     magnetometro:{
                         x: this.state.magX,
@@ -168,10 +169,10 @@ export default class EnviaDados extends Component{
     };
     
     _unsubscribe = () => {
-    this._subscription && this._subscription.unsubscribe();
-    this._subscription = null;
+        this._subscription && this._subscription.unsubscribe();
+        this._subscription = null;
     };
-    
+
     _angle = magnetometer => {
         let angle = 0;
         if (magnetometer) {

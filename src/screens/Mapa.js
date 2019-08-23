@@ -1,6 +1,6 @@
 import MapView, {Marker} from 'react-native-maps'
 import React, {Component} from 'react'
-import {Image, Text, View} from 'react-native'
+import {Image, Text, TouchableOpacity, View} from 'react-native'
 
 import Estilos from '../css/Estilos'
 
@@ -39,39 +39,54 @@ export default class Map extends Component{
     .catch((err) => alert(err))                                 // exibindo erro
   }
 
-  getDados(){
-    fetch('http://200.145.184.232:3013/')                           // consultando o banco e setando informacoes
-    .then(response => response.json())                              //
-    .then(pontos => this.setState({ markers: pontos }))             // atribuindo todos marcadores ao array de marcadores
-    .catch((err) => alert(err))                                     // exibindo erro
-  }
+  updateMarkers() {
+    fetch('http://200.145.184.232:3013/')                       // consultando o banco e setando informacoes
+    .then(response => response.json())                          //
+    .then(pontos => {
+      var markers = []
+      let id = 0
 
+      pontos.map((ponto, index) => {
+        markers.push({
+          ponto
+        })
+        // console.warn(markers);
+        this.setState({markers})
+      })                // atribuindo todos marcadores ao array de marcadores
+    })
+    .catch((err) => alert(err))                                 // exibindo erro
+}
   render(){
     // mapType={'satellite'}
 
     return(
-        <MapView style={Estilos.map} showsMyLocationButton={true} showsUserLocation={true}
-          followsUserLocation={true} initialRegion={this.state.region} loadingEnabled={true}
-        >
-          {this.state.markers.map((marker, index) => (      //percorrendo array com os marcadores
-            <Marker key={index} coordinate={marker.coordinates}>  
-              <MapView.Callout style={Estilos.infoCallOut}> 
-                <View style={Estilos.infoView}>
-                  <Image
-                    style={{width: 250, height: 300, margin: 10}}
-                    source={{uri: `data:image/${marker.extensao};base64,${marker.imagem.base64}`}}
-                  />
-                  <Text style={Estilos.legenda}>{marker.descricao}</Text>
-                  {/* <Text style={Estilos.legenda}>{marker.perguntas}</Text>
-                  <Text style={Estilos.legenda}>{marker.respostas}</Text>
-                  <Text style={Estilos.legenda}>{marker.magnetometro.x}</Text>
-                  <Text style={Estilos.legenda}>{marker.magnetometro.y}</Text>
+        <View style={Estilos.map}>
+          <MapView style={Estilos.map} showsMyLocationButton={true} showsUserLocation={true}
+            followsUserLocation={true} initialRegion={this.state.region} loadingEnabled={true}
+            >
+            {this.state.markers.map((marker, index) => (      //percorrendo array com os marcadores
+              <Marker key={index} coordinate={marker.coordinates}>  
+                <MapView.Callout style={Estilos.infoCallOut}> 
+                  <View style={Estilos.infoView}>
+                    <Image
+                      style={{width: 250, height: 300, margin: 10}}
+                      source={{uri: `data:image/${marker.extensao};base64,${marker.imagem.base64}`}}
+                      />
+                    <Text style={Estilos.legenda}>{marker.descricao}</Text>
+                    {/* <Text style={Estilos.legenda}>{marker.perguntas}</Text>
+                    <Text style={Estilos.legenda}>{marker.respostas}</Text>
+                    <Text style={Estilos.legenda}>{marker.magnetometro.x}</Text>
+                    <Text style={Estilos.legenda}>{marker.magnetometro.y}</Text>
                   <Text style={Estilos.legenda}>{marker.magnetometro.z}</Text> */}
-                </View>
-              </MapView.Callout>
-            </Marker>
-          ))}
-        </MapView> 
+                  </View>
+                </MapView.Callout>
+              </Marker>
+            ))}
+          </MapView>
+          {/* <TouchableOpacity onPress={this.updateMarkers} style={Estilos.buttomAtualizarMapa}>
+            <Text style={Estilos.Text}>Atualizar</Text>
+          </TouchableOpacity>  */}
+        </View>
     )
   }
 }
