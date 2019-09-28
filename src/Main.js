@@ -38,7 +38,7 @@ const MenuRoutes ={
 }
 
 const MenuConfig = {
-    initialRouteName: 'EnviaDados',
+    initialRouteName: 'Mapa',
     tabBarOptions:{
         showLabel: false,
     }

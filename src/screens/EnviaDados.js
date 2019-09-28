@@ -114,13 +114,15 @@ export default class EnviaDados extends Component{
                         coordinates:{                           //.coordenadas do ponto
                             latitude: this.state.latitude,      //
                             longitude: this.state.longitude,    //    
-                        },                                      //
+                        },                                      
                         acuracia: this.state.accuracy,          //
                         altitude: this.state.altitude,          //
                         perguntas: this.state.perguntas,        //
                         respostas:this.state.respostas,         //
                         descricao: this.state.descricao,        //
-                        imagem: this.state.image.base64,        //
+                        imagem:{
+                            base64: this.state.image.base64,    //
+                        },
                         extensao: ext,                          //.extensao do arquivo
                         direcao: this._degree(this.state.magnetometer),       ////
                         dataHora: this.state.date,              ////
@@ -135,6 +137,7 @@ export default class EnviaDados extends Component{
                 
                 alert('Dados enviados!');
                 this.setState({descricao: '', image: null}) //setando para valores iniciais
+                magX = magY = magZ = 0;
             }catch(err){ 
                 alert('Dados não enviados, salvo no repositório!'+err); 
                 this.salvarNoRepositorioOffline();

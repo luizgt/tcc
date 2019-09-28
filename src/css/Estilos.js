@@ -45,12 +45,9 @@ export default StyleSheet.create({
         backgroundColor: '#FF0000'
     },
     buttomAtualizarMapa:{
-        marginTop: 15,
-        marginLeft: 15,
         padding: 10,
         borderRadius: 50,
-        backgroundColor: '#4286f4',
-        width: 85
+        backgroundColor: '#4286f4'
     },
     Text:{
         fontSize: 17,
@@ -192,5 +189,11 @@ export default StyleSheet.create({
         justifyContent:'center',
         marginBottom: 40,
         marginTop: 80
-    }
+    },
+    viewMapa:{
+        display:'flex',
+        flexDirection:'row',
+        paddingTop: 20,
+        paddingLeft: 20
+    },
 })

@@ -1,6 +1,7 @@
 import MapView, {Marker} from 'react-native-maps'
 import React, {Component} from 'react'
 import {Image, Text, TouchableOpacity, View} from 'react-native'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import Estilos from '../css/Estilos'
 
@@ -39,21 +40,10 @@ export default class Map extends Component{
     .catch((err) => alert(err))                                 // exibindo erro
   }
 
-  updateMarkers() {
-    fetch('http://186.217.107.31:3013/')                       // consultando o banco e setando informacoes
+  async updateMarkers() {
+    await fetch('http://186.217.107.31:3013/')                       // consultando o banco e setando informacoes
     .then(response => response.json())                          //
-    .then(pontos => {
-      var markers = []
-      let id = 0
-
-      pontos.map((ponto, index) => {
-        markers.push({
-          ponto
-        })
-        // console.warn(markers);
-        this.setState({markers})
-      })                // atribuindo todos marcadores ao array de marcadores
-    })
+    .then(markers => this.setState({ markers }))                // atribuindo todos marcadores ao array de marcadores
     .catch((err) => alert(err))                                 // exibindo erro
 }
   render(){
@@ -83,9 +73,11 @@ export default class Map extends Component{
               </Marker>
             ))}
           </MapView>
-          {/* <TouchableOpacity onPress={this.updateMarkers} style={Estilos.buttomAtualizarMapa}>
-            <Text style={Estilos.Text}>Atualizar</Text>
-          </TouchableOpacity>  */}
+          <View style={Estilos.viewMapa}>
+            <TouchableOpacity onPress={() =>{this.updateMarkers()}} style={Estilos.buttomAtualizarMapa}>
+              <Icon name='reload' size={25} color={'white'}/>                
+            </TouchableOpacity>
+          </View>
         </View>
     )
   }
