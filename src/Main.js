@@ -3,6 +3,7 @@ import {createBottomTabNavigator} from 'react-navigation'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
 import EnviaDados from './screens/EnviaDados'
+import DadosSalvos from './screens/DadosSalvos'
 import Mapa from './screens/Mapa'
 
 const MenuRoutes ={
@@ -14,6 +15,15 @@ const MenuRoutes ={
             title: 'Enviar',
             tabBarIcon: ({tintColor}) =>
                 <Icon name='camera' size={25} color={tintColor} />
+        }
+    },
+    DadosSalvos: {
+        name: 'DadosSalvos',
+        screen: DadosSalvos,
+        navigationOptions:{
+            title: 'Dados',
+            tabBarIcon: ({tintColor}) =>
+                <Icon name='picture-o' size={25} color={tintColor} />
         }
     },
     Mapa: {
@@ -28,7 +38,7 @@ const MenuRoutes ={
 }
 
 const MenuConfig = {
-    initialRouteName: 'EnviaDados',
+    initialRouteName: 'DadosSalvos',
     tabBarOptions:{
         showLabel: false,
     }

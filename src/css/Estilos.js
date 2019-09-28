@@ -1,6 +1,5 @@
 import { StyleSheet, Dimensions, Platform } from 'react-native'
 
-
 export default StyleSheet.create({
     container:{
         flex: 1,
@@ -37,6 +36,13 @@ export default StyleSheet.create({
         padding: 10,
         borderRadius: 50,
         backgroundColor: '#4286f4'
+    },
+    buttomDelete:{
+        marginTop: 15,
+        marginRight: 25,
+        padding: 10,
+        borderRadius: 50,
+        backgroundColor: '#FF0000'
     },
     buttomAtualizarMapa:{
         marginTop: 15,
@@ -133,5 +139,47 @@ export default StyleSheet.create({
     },
     dadosMag:{
         marginTop: 10,
+    },
+    dadosPrincipal:{
+        padding: 15,
+    },
+    dadosCard:{
+        padding:  15,
+        borderColor: '#FFAE40',
+        borderWidth: 2,
+        borderRadius: 10,
+        marginBottom: 15,
+    },
+    dadosTexto:{
+        color: '#000',
+        fontSize: 14,
+        marginBottom: 5,
+        fontWeight:'bold'
+    },
+    dadosInfo:{
+        color: '#000',
+        fontSize: 14,
+        marginBottom: 5
+    },
+    dadosViewTexto:{
+        display:'flex',
+        flexDirection:'row'
+    },
+    dadosImagem:{
+        width: 150,
+        height: 200,
+        borderRadius: 10,
+    },
+    viewImagem:{
+        marginBottom: 15,
+        display:'flex',
+        alignItems:'center',
+        justifyContent:'center'
+    },
+    dadosBotoes:{
+        display:'flex',
+        flexDirection:'row',
+        alignItems:'center',
+        justifyContent:'center'
     }
 })
