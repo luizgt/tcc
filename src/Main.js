@@ -38,7 +38,7 @@ const MenuRoutes ={
 }
 
 const MenuConfig = {
-    initialRouteName: 'DadosSalvos',
+    initialRouteName: 'EnviaDados',
     tabBarOptions:{
         showLabel: false,
     }

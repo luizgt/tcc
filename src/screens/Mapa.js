@@ -33,14 +33,14 @@ export default class Map extends Component{
       (error) => this.setState({ erro: error.message }),
       { enableHighAccuracy: false, timeout: 1000, maximumAge: 10 },
     );
-    fetch('http://200.145.184.232:3013/')                       // consultando o banco e setando informacoes
+    fetch('http://186.217.107.31:3013/')                       // consultando o banco e setando informacoes
     .then(response => response.json())                          //
     .then(markers => this.setState({ markers }))                // atribuindo todos marcadores ao array de marcadores
     .catch((err) => alert(err))                                 // exibindo erro
   }
 
   updateMarkers() {
-    fetch('http://200.145.184.232:3013/')                       // consultando o banco e setando informacoes
+    fetch('http://186.217.107.31:3013/')                       // consultando o banco e setando informacoes
     .then(response => response.json())                          //
     .then(pontos => {
       var markers = []

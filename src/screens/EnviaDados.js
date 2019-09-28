@@ -107,37 +107,38 @@ export default class EnviaDados extends Component{
             for(let aux = auxExtensao+1; aux < this.state.image.uri.length; aux++)  //percorrendo o array para pegar a extensao
                 ext+= this.state.image.uri[aux];                                    //
 
-            // try{
-            //     fetch('http://200.145.184.232:3013/',{       //MUDAR PARA O IP DA MAQUINA (SERVER)
-            //         method: 'POST',
-            //         body: JSON.stringify({                      // DADOS PARA O BANCO
-            //             coordinates:{                           //.coordenadas do ponto
-            //                 latitude: this.state.latitude,      //
-            //                 longitude: this.state.longitude,    //    
-            //             },                                      //
-            //             acuracia: this.state.accuracy,          //
-            //             altitude: this.state.altitude,          //
-            //             perguntas: this.state.perguntas,        //
-            //             respostas:this.state.respostas,         //
-            //             descricao: this.state.descricao,        //
-            //             imagem: this.state.image,               //
-            //             extensao: ext,                          //.extensao do arquivo
-            //             direcao: this._degree(this.state.magnetometer),       ////
-            //             dataHora: this.state.date,              ////
-            //             magnetometro:{
-            //                 x: magX,
-            //                 y: magY,
-            //                 z: magZ,
-            //             }
-            //         }),
-            //         headers: {"Content-Type": "application/json"}
-            //     })
+            try{
+                fetch('http://186.217.107.31:3013/',{       //MUDAR PARA O IP DA MAQUINA (SERVER)
+                    method: 'POST',
+                    body: JSON.stringify({                      // DADOS PARA O BANCO
+                        coordinates:{                           //.coordenadas do ponto
+                            latitude: this.state.latitude,      //
+                            longitude: this.state.longitude,    //    
+                        },                                      //
+                        acuracia: this.state.accuracy,          //
+                        altitude: this.state.altitude,          //
+                        perguntas: this.state.perguntas,        //
+                        respostas:this.state.respostas,         //
+                        descricao: this.state.descricao,        //
+                        imagem: this.state.image.base64,        //
+                        extensao: ext,                          //.extensao do arquivo
+                        direcao: this._degree(this.state.magnetometer),       ////
+                        dataHora: this.state.date,              ////
+                        magnetometro:{
+                            x: magX,
+                            y: magY,
+                            z: magZ,
+                        }
+                    }),
+                    headers: {"Content-Type": "application/json"}
+                })
                 
-            //     alert('Dados enviados!');
-            //     this.setState({descricao: '', image: null}) //setando para valores iniciais
-            // }catch(err){ alert('Dados não enviados!'+err); }
-
-            this.saveOnRepository();
+                alert('Dados enviados!');
+                this.setState({descricao: '', image: null}) //setando para valores iniciais
+            }catch(err){ 
+                alert('Dados não enviados, salvo no repositório!'+err); 
+                this.salvarNoRepositorioOffline();
+            }
         }//else
     }//salvar
 
@@ -175,27 +176,27 @@ export default class EnviaDados extends Component{
         )
     }
 
-    async saveOnRepository(){
+    async salvarNoRepositorioOffline(){
         
         const data = {
             id: Math.floor(Date.now() / 1000),
             
-            latitude: this.state.latitude === undefined ? 'Vazio' : this.state.latitude.toString(),
-            longitude: this.state.longitude === undefined ? 'Vazio' : this.state.longitude.toString(),                                             
+            latitude: this.state.latitude === undefined||null ? 'Vazio' : this.state.latitude,
+            longitude: this.state.longitude === undefined||null ? 'Vazio' : this.state.longitude,                                             
             
-            acuracia: this.state.accuracy === undefined ? 'Vazio' : this.state.accuracy.toString(),          
-            altitude: this.state.altitude === undefined ? 'Vazio' : this.state.altitude.toString(),                          
+            acuracia: this.state.accuracy === undefined||null ? 'Vazio' : this.state.accuracy,          
+            altitude: this.state.altitude === undefined||null ? 'Vazio' : this.state.altitude,                          
             perguntas: this.state.perguntas  === undefined||null ? 'Vazio' : this.state.perguntas.toString(),        
             respostas: this.state.respostas  === undefined||null ? 'Vazio' : this.state.respostas.toString(),
-            descricao: this.state.descricao === undefined ? 'Vazio' : this.state.descricao,   
-            imagem: this.state.image === undefined ? 'Vazio' : this.state.image.base64,        
-            extensao: ext === undefined ? 'Vazio' : ext,
-            direcao: this._degree(this.state.magnetometer) === undefined ? 'Vazio' : this._degree(this.state.magnetometer),       
-            dataHora: this.state.date === undefined ? 'Vazio' : this.state.date,
+            descricao: this.state.descricao === undefined||null ? 'Vazio' : this.state.descricao,   
+            imagem: this.state.image === undefined||null ? 'Vazio' : this.state.image.base64,        
+            extensao: ext === undefined||null ? 'Vazio' : ext,
+            direcao: this.state.magnetometer === undefined||null ? 'Vazio' : this._direction(this._degree(this.state.magnetometer)),       
+            dataHora: this.state.date === undefined||null ? 'Vazio' : this.state.date,
             
-            x: magX === undefined ? 'Vazio' : magX.toString(),
-            y: magY === undefined ? 'Vazio' : magY.toString(),
-            z: magZ === undefined ? 'Vazio' : magZ.toString(),
+            x: magX === undefined||null ? 'Vazio' : magX.toString(),
+            y: magY === undefined||null ? 'Vazio' : magY.toString(),
+            z: magZ === undefined||null ? 'Vazio' : magZ.toString(),
         }
 
         const realm = await getRealm();
@@ -203,6 +204,8 @@ export default class EnviaDados extends Component{
         realm.write(() =>{
             realm.create('Repository', data);
         });
+
+        this.setState({descricao: '', image: null}) //setando para valores iniciais
     }
 
     render(){

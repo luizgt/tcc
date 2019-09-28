@@ -181,5 +181,16 @@ export default StyleSheet.create({
         flexDirection:'row',
         alignItems:'center',
         justifyContent:'center'
+    },
+    NenhumItemSalvo:{
+        fontSize: 20,
+        fontWeight: 'bold'
+    },
+    MensagemNenhumItemSalvo:{
+        display:'flex',
+        alignItems:'center',
+        justifyContent:'center',
+        marginBottom: 40,
+        marginTop: 80
     }
 })
