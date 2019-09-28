@@ -108,7 +108,7 @@ export default class EnviaDados extends Component{
                 ext+= this.state.image.uri[aux];                                    //
 
             try{
-                fetch('http://186.217.107.31:3013/',{       //MUDAR PARA O IP DA MAQUINA (SERVER)
+                fetch('http://192.168.0.14:3013/',{       //MUDAR PARA O IP DA MAQUINA (SERVER)
                     method: 'POST',
                     body: JSON.stringify({                      // DADOS PARA O BANCO
                         coordinates:{                           //.coordenadas do ponto
