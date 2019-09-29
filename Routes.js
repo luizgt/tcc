@@ -10,7 +10,8 @@ const MongoClient = require('mongodb').MongoClient;
 //url para acesso ao banco
 const uri = "mongodb+srv://luizzgt:jnU4132717luiz@cluster0-buhms.mongodb.net/test?retryWrites=true&w=majority"
 
-MongoClient.connect(uri, (err, client) => { //conectando ao banco
+MongoClient.connect(uri, { useNewUrlParser: true,  useUnifiedTopology: true }, (err, client) => { //conectando ao banco
+    
     if (err) return console.log(err)        //se a conecao n for aceita, exibe erro
     db = client.db('Cluster0')              // acessando o banco
 
@@ -51,6 +52,7 @@ app.post('/', (req, res) => {               //resposta ao post
     db.collection('mapa').save(req.body, (err, result) => {
         if (err) return console.log(err)
 
+        res.send('Salvo no banco!');
         console.log('salvo no banco!')      //msg confirmacao
     })
 })

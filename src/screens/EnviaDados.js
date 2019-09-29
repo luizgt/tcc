@@ -57,16 +57,16 @@ export default class EnviaDados extends Component{
         ]
     }
 
-    componentDidMount(){
-        // fetch('http://200.145.184.232:3013/formulario')                // consultando o banco e setando informacoes
-        // .then(response => response.json())                             //
-        // .then(perguntas => {
-        //     this.setState({formulario: perguntas})
-        // })             // atribuindo todos marcadores ao array de marcadores
-        // .catch((err) => alert(err))                                    // exibindo erro
+    // componentDidMount(){
+    //     fetch('http://186.217.107.31:3013/formulario')                // consultando o banco e setando informacoes
+    //     .then(response => response.json())                             //
+    //     .then(perguntas => {
+    //         this.setState({formulario: perguntas})
+    //     })             // atribuindo todos marcadores ao array de marcadores
+    //     .catch((err) => alert(err))                                    // exibindo erro
 
-        // this._toggle();
-    }
+    //     this._toggle();
+    // }
 
     tirarFoto = async () =>{
         // ImagePicker.showImagePicker
@@ -97,7 +97,7 @@ export default class EnviaDados extends Component{
         })
     }
 
-    salvarNoBanco = () =>{        
+    salvarNoBanco = () =>{      
         if(this.state.image == null){                   //para nao submeter uma imagem vazia ao servidor
             alert('Imagem não pode ser vazia!')         //
         }else{
@@ -107,8 +107,8 @@ export default class EnviaDados extends Component{
             for(let aux = auxExtensao+1; aux < this.state.image.uri.length; aux++)  //percorrendo o array para pegar a extensao
                 ext+= this.state.image.uri[aux];                                    //
 
-            try{
-                fetch('http://192.168.0.14:3013/',{       //MUDAR PARA O IP DA MAQUINA (SERVER)
+            
+                fetch('http://186.217.107.31:3013/',{       //MUDAR PARA O IP DA MAQUINA (SERVER)
                     method: 'POST',
                     body: JSON.stringify({                      // DADOS PARA O BANCO
                         coordinates:{                           //.coordenadas do ponto
@@ -133,15 +133,15 @@ export default class EnviaDados extends Component{
                         }
                     }),
                     headers: {"Content-Type": "application/json"}
-                })
-                
-                alert('Dados enviados!');
+                }).then(response => response.json())
+                .then( resposta => alert(resposta))
+                .catch(
+                    err => alert(err),
+                    this.salvarNoRepositorioOffline()
+                )
+
                 this.setState({descricao: '', image: null}) //setando para valores iniciais
                 magX = magY = magZ = 0;
-            }catch(err){ 
-                alert('Dados não enviados, salvo no repositório!'+err); 
-                this.salvarNoRepositorioOffline();
-            }
         }//else
     }//salvar
 
