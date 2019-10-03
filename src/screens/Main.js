@@ -2,13 +2,13 @@ import React from 'react'
 import {createBottomTabNavigator} from 'react-navigation'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
-import EnviaDados from './screens/EnviaDados'
-import DadosSalvos from './screens/DadosSalvos'
-import Mapa from './screens/Mapa'
+import EnviaDados from './EnviaDados'
+import DadosSalvos from './DadosSalvos'
+import Mapa from './Mapa'
+import Login from './Login'
 
 const MenuRoutes ={
     EnviaDados: {
-        teste: 1,
         name: 'Enviar Dados',
         screen: EnviaDados,
         navigationOptions:{
@@ -34,11 +34,20 @@ const MenuRoutes ={
             tabBarIcon: ({tintColor}) =>
                 <Icon name='map' size={25} color={tintColor} />
         }
+    },
+    Login: {
+        name: 'Login',
+        screen: Login,
+        navigationOptions:{
+            title: 'Login',
+            tabBarIcon: ({tintColor}) =>
+                <Icon name='user' size={25} color={tintColor} />
+        }
     }
 }
 
 const MenuConfig = {
-    initialRouteName: 'EnviaDados',
+    initialRouteName: 'Login',
     tabBarOptions:{
         showLabel: false,
     }

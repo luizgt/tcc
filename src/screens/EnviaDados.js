@@ -9,15 +9,20 @@ import {
     // gyroscope,
     // barometer,
     magnetometer,
+    setUpdateIntervalForType,
+    SensorTypes
   } from "react-native-sensors";
 
+import { GoogleSignin } from 'react-native-google-signin';
+
 import Estilo from '../css/Estilos'
-import getRealm from '../services/Realm';
+import getRealm, {getUser} from '../services/Realm';
 
 var magX, magY, magZ;
 var ext;
 
 export default class EnviaDados extends Component{
+
     state = {       //estado inicial
         image: null,
         error: null,
@@ -30,7 +35,7 @@ export default class EnviaDados extends Component{
         formulario: [],
         perguntas:[],
         respostas:[],
-
+        usuario: [],
         magnetometer: '0',
 
         selected: false,
@@ -54,24 +59,26 @@ export default class EnviaDados extends Component{
               color: '#FF8F00',
               size: 13,
             }
-        ]
+        ],
+
+        logado: false,
     }
 
-    // componentDidMount(){
-    //     fetch('http://186.217.107.31:3013/formulario')                // consultando o banco e setando informacoes
-    //     .then(response => response.json())                             //
-    //     .then(perguntas => {
-    //         this.setState({formulario: perguntas})
-    //     })             // atribuindo todos marcadores ao array de marcadores
-    //     .catch((err) => alert(err))                                    // exibindo erro
+    async componentDidMount(){
+        fetch('http://200.145.184.232:3013/formulario')                // consultando o banco e setando informacoes
+        .then(response => response.json())                             //
+        .then(perguntas => {
+            this.setState({formulario: perguntas})
+        })             // atribuindo todos marcadores ao array de marcadores
+        .catch((err) => alert(err))                                    // exibindo erro
+        
+        await this.loadRepository();
 
-    //     this._toggle();
-    // }
+        this._toggle();
+    }
 
     tirarFoto = async () =>{
-        // ImagePicker.showImagePicker
         ImagePicker.launchCamera({
-            tittle: 'Escolha a Imagem',
             maxHeight: 600,
             maxWidth: 800,
         }, res=>{
@@ -93,57 +100,73 @@ export default class EnviaDados extends Component{
                 this.setState({
                     date: date + '/' + month + '/' + year + ' ' + hours + ':' + min + ':' + sec,
                 });
+
+                this.pegarLocalizacao();      // enquanto a localização for atualizada atualiza a renderizacao
+
             }
         })
     }
 
-    salvarNoBanco = () =>{      
-        if(this.state.image == null){                   //para nao submeter uma imagem vazia ao servidor
-            alert('Imagem não pode ser vazia!')         //
-        }else{
-            ext = '';                                               //variaveis para buscar extensao da imagem
-            var auxExtensao = this.state.image.uri.lastIndexOf('.')     //
+    salvarNoBanco = async () =>{
+        await this.loadRepository();  //verificando se o usuario logou
 
-            for(let aux = auxExtensao+1; aux < this.state.image.uri.length; aux++)  //percorrendo o array para pegar a extensao
-                ext+= this.state.image.uri[aux];                                    //
+        if(this.state.image == null) alert('Imagem não pode ser vazia!')
+        else if(!this.state.logado) alert('Usuário não logado!')
+           else{
+                ext = '';                                                  //variaveis para buscar extensao da imagem
+                var auxExtensao = this.state.image.uri.lastIndexOf('.')     //
 
-            
-                fetch('http://186.217.107.31:3013/',{       //MUDAR PARA O IP DA MAQUINA (SERVER)
-                    method: 'POST',
-                    body: JSON.stringify({                      // DADOS PARA O BANCO
-                        coordinates:{                           //.coordenadas do ponto
-                            latitude: this.state.latitude,      //
-                            longitude: this.state.longitude,    //    
-                        },                                      
-                        acuracia: this.state.accuracy,          //
-                        altitude: this.state.altitude,          //
-                        perguntas: this.state.perguntas,        //
-                        respostas:this.state.respostas,         //
-                        descricao: this.state.descricao,        //
-                        imagem:{
-                            base64: this.state.image.base64,    //
-                        },
-                        extensao: ext,                          //.extensao do arquivo
-                        direcao: this._degree(this.state.magnetometer),       ////
-                        dataHora: this.state.date,              ////
-                        magnetometro:{
-                            x: magX,
-                            y: magY,
-                            z: magZ,
-                        }
-                    }),
-                    headers: {"Content-Type": "application/json"}
-                }).then(response => response.json())
-                .then( resposta => alert(resposta))
-                .catch(
-                    err => alert(err),
-                    this.salvarNoRepositorioOffline()
-                )
+                for(let aux = auxExtensao+1; aux < this.state.image.uri.length; aux++)  //percorrendo o array para pegar a extensao
+                    ext+= this.state.image.uri[aux];                                    //
 
-                this.setState({descricao: '', image: null}) //setando para valores iniciais
-                magX = magY = magZ = 0;
-        }//else
+                    fetch('http://200.145.184.232:3013/',{       //MUDAR PARA O IP DA MAQUINA (SERVER)
+                        method: 'POST',
+                        body: JSON.stringify({                      // DADOS PARA O BANCO
+                            coordinates:{                           //.coordenadas do ponto
+                                latitude: this.state.latitude,      //
+                                longitude: this.state.longitude,    //    
+                            },                                      
+                            acuracia: this.state.accuracy,          //
+                            altitude: this.state.altitude,          //
+                            perguntas: this.state.perguntas,        //
+                            respostas:this.state.respostas,         //
+                            descricao: this.state.descricao,        //
+                            imagem:{
+                                base64: this.state.image.base64,    //
+                            },
+                            extensao: ext,                          //.extensao do arquivo
+                            direcao: this._degree(this.state.magnetometer),       ////
+                            dataHora: this.state.date,              ////
+                            magnetometro:{
+                                x: magX,
+                                y: magY,
+                                z: magZ,
+                            },
+                            usuario:{
+                                email: this.state.usuario.emailUsuario,
+                                nome: this.state.usuario.nomeUsuario
+                            }
+                        }),
+                        headers: {"Content-Type": "application/json"}
+                    }).catch(
+                        err => alert(err),
+                        this.salvarNoRepositorioOffline()
+                    )
+                    this.zerarRespostas();
+            }//else
     }//salvar
+
+    zerarRespostas = async () => {
+        await fetch('http://200.145.184.232:3013/formulario')                // consultando o banco e setando informacoes
+        .then(response => response.json())                             //
+        .then(perguntas => {
+            this.setState({formulario: perguntas})
+        })             // atribuindo todos marcadores ao array de marcadores
+        .catch((err) => alert(err))                                    // exibindo erro
+
+        this.setState({descricao: '', image: null}) //setando para valores iniciais
+        magX = magY = magZ = 0;
+    }
 
     salvarRespostaNoState(index, pergunta){
         var auxPerguntas = this.state.perguntas;
@@ -179,41 +202,78 @@ export default class EnviaDados extends Component{
         )
     }
 
-    async salvarNoRepositorioOffline(){
-        
+    async salvarNoRepositorioOffline(){     
         const data = {
             id: Math.floor(Date.now() / 1000),
-            
+
             latitude: this.state.latitude === undefined||null ? 'Vazio' : this.state.latitude,
-            longitude: this.state.longitude === undefined||null ? 'Vazio' : this.state.longitude,                                             
-            
-            acuracia: this.state.accuracy === undefined||null ? 'Vazio' : this.state.accuracy,          
-            altitude: this.state.altitude === undefined||null ? 'Vazio' : this.state.altitude,                          
-            perguntas: this.state.perguntas  === undefined||null ? 'Vazio' : this.state.perguntas.toString(),        
+            longitude: this.state.longitude === undefined||null ? 'Vazio' : this.state.longitude,
+
+            acuracia: this.state.accuracy === undefined||null ? 'Vazio' : this.state.accuracy,
+            altitude: this.state.altitude === undefined||null ? 'Vazio' : this.state.altitude,
+            perguntas: this.state.perguntas  === undefined||null ? 'Vazio' : this.state.perguntas.toString(),
             respostas: this.state.respostas  === undefined||null ? 'Vazio' : this.state.respostas.toString(),
-            descricao: this.state.descricao === undefined||null ? 'Vazio' : this.state.descricao,   
-            imagem: this.state.image === undefined||null ? 'Vazio' : this.state.image.base64,        
+            descricao: this.state.descricao === undefined||null ? 'Vazio' : this.state.descricao,
+            imagem: this.state.image === undefined||null ? 'Vazio' : this.state.image.base64,
             extensao: ext === undefined||null ? 'Vazio' : ext,
-            direcao: this.state.magnetometer === undefined||null ? 'Vazio' : this._direction(this._degree(this.state.magnetometer)),       
+            direcao: this.state.magnetometer === undefined||null ? 'Vazio' : parseFloat(this._degree(this.state.magnetometer)),
             dataHora: this.state.date === undefined||null ? 'Vazio' : this.state.date,
-            
             x: magX === undefined||null ? 'Vazio' : magX.toString(),
             y: magY === undefined||null ? 'Vazio' : magY.toString(),
             z: magZ === undefined||null ? 'Vazio' : magZ.toString(),
+            emailUsuario: this.state.usuario.emailUsuario === undefined||null ? 'Vazio' : this.state.usuario.emailUsuario,
+            nomeUsuario: this.state.usuario.nomeUsuario === undefined||null ? 'Vazio' : this.state.usuario.nomeUsuario,
         }
 
         const realm = await getRealm();
 
         realm.write(() =>{
-            realm.create('Repository', data);
+            realm.create('Repository', data)
         });
+        this.setState({descricao: '', image: null, selected: false}) //setando para valores iniciais
 
-        this.setState({descricao: '', image: null}) //setando para valores iniciais
+        realm.close();
     }
 
-    render(){
-        this.pegarLocalizacao();      // enquanto a localização for atualizada atualiza a renderizacao
+    async loadRepository(){
+        const realm = await getUser();
+        const data = await realm.objects('User');
+        
+        let auxParaPegarUsuario;
+        
+        if(data.length == 1){
+            auxParaPegarUsuario = JSON.stringify(data[0]);
+            this.setState({
+                usuario: JSON.parse(auxParaPegarUsuario),
+                logado: true
+            });
+        }else{
+            this.setState({
+                logado: false
+            });
+        }
+        realm.close();
+    }
 
+
+    // async loadRepository(){
+    //     let realm = await getUser();
+    //     const data = await realm.objects('User');
+    //     console.warn(data);
+    //     if(data.length > 0){
+    //         let auxParaReceberUsuario = await JSON.stringify(data[0]);
+            
+    //         this.setState({
+    //             usuario: JSON.parse(auxParaReceberUsuario)
+    //         });
+    //         realm.close();
+    //     } else {
+    //         this.setState({usuario: null});
+    //         realm.close();
+    //     }
+    // }
+
+    render(){
         return(
             <ScrollView>
                 <View style={Estilo.container}>
@@ -222,7 +282,7 @@ export default class EnviaDados extends Component{
                         <Image source={this.state.image} style={Estilo.image}/>
                     </View>
                     <TouchableOpacity onPress={this.tirarFoto} style={Estilo.buttom}>
-                        <Text style={Estilo.Text}>Capturar foto</Text>
+                        <Icon name='camera' size={25} color={'white'}></Icon>
                     </TouchableOpacity>
 
                     <TextInput style={Estilo.input} placeholder='Descrição da imagem (opcional)' onChangeText={(descricao) => this.setState({descricao})}>{this.state.descricao}</TextInput>
@@ -236,7 +296,7 @@ export default class EnviaDados extends Component{
                                         selected={this.state.selected}
                                         style={Estilo.botoes}
                                         radioButtons={this.state.radioButtons}
-                                        onPress={radioButtons => this.salvarRespostanoState(index, pergunta.pergunta)}
+                                        onPress={radioButtons => this.salvarRespostaNoState(index, pergunta.pergunta)}
                                     />
                                 </View>
                                 <Text key={index} style={{marginLeft:20}}>Selecionado: {this.state.perguntas[index]} {this.state.respostas[index]}</Text>
@@ -261,7 +321,7 @@ export default class EnviaDados extends Component{
                             </View>
                         </View>
                     </View>
-                    
+
                     <TouchableOpacity onPress={this.salvarNoBanco} style={Estilo.buttomEnviar}>
                         <Icon name='arrow-right' size={25} color={'white'}/>
                     </TouchableOpacity>
@@ -278,20 +338,20 @@ export default class EnviaDados extends Component{
             this._subscribe();
         }
     };
-    
+
     _subscribe = async () => {
-        // setUpdateIntervalForType(SensorTypes.magnetometer, 1000);
+        setUpdateIntervalForType(SensorTypes.magnetometer, 1000);
         this._subscription = magnetometer.subscribe(
             sensorData => this.setState({magnetometer: this._angle(sensorData)}),
             error => console.log("Sensor não disponível"),
         );
     };
-    
+   
     _unsubscribe = () => {
         this._subscription && this._subscription.unsubscribe();
         this._subscription = null;
     };
-    
+
     _angle = magnetometer => {
         let angle = 0;
         if (magnetometer) {
@@ -304,7 +364,7 @@ export default class EnviaDados extends Component{
         }
         return Math.round(angle);
     };
-    
+
     _direction = degree => {
         if (degree >= 22.5 && degree < 67.5) return "Nordeste";
          else if (degree >= 67.5 && degree < 112.5)  return "Leste";
@@ -315,7 +375,7 @@ export default class EnviaDados extends Component{
          else if (degree >= 292.5 && degree < 337.5) return "Noroeste";
          else return "Norte";
     };
-    
+
     // Match the device top with pointer 0° degree. (By default 0° starts from the right of the device.)
     _degree = magnetometer => {
         return magnetometer - 90 >= 0
@@ -323,3 +383,4 @@ export default class EnviaDados extends Component{
             : magnetometer + 271;
     };
 }
+

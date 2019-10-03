@@ -3,6 +3,7 @@ package com.tcc;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import co.apptailor.googlesignin.RNGoogleSigninPackage;
 import io.realm.react.RealmReactPackage;
 import com.sensors.RNSensorsPackage;
 import com.airbnb.android.react.maps.MapsPackage;
@@ -23,10 +24,13 @@ public class MainApplication extends Application implements ReactApplication {
       return BuildConfig.DEBUG;
     }
 
+    
+
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNGoogleSigninPackage(),
             new RealmReactPackage(),
             new RNSensorsPackage(),
             new MapsPackage(),

@@ -179,6 +179,11 @@ export default StyleSheet.create({
         alignItems:'center',
         justifyContent:'center'
     },
+    dadosAtualizar:{
+        display: 'flex',
+        flexDirection: 'row-reverse',
+        marginBottom: 15,
+    },
     NenhumItemSalvo:{
         fontSize: 20,
         fontWeight: 'bold'
@@ -196,4 +201,67 @@ export default StyleSheet.create({
         paddingTop: 20,
         paddingLeft: 20
     },
+    loginBotaoGoogle:{
+        marginTop: 50,
+        width: 200, 
+        height: 50
+    },
+    loginView:{
+        display:'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems:'center',
+        paddingTop: 100
+    },
+    loginTitulo:{
+        fontSize: 25,
+        color: 'black',
+    },
+    loginImagemUsuario:{
+        width: 200,
+        height: 200,
+        borderRadius: 100
+    },
+    loginViewImagemUsuario:{
+        display: 'flex',
+        flexDirection: 'row',
+        alignContent: 'center',
+        justifyContent: 'center',
+        paddingTop:20,
+        paddingBottom:20
+    },
+    loginNomeUsuario:{
+        fontSize: 25,
+        color: 'black',
+        fontWeight: 'bold'
+    },
+    loginEmailUsuario:{
+        fontSize: 20
+    },
+    loginViewInformacaoUsuario:{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        marginBottom: 50,
+    },
+    viewFundoDadosUsuario:{
+        height: "100%",
+        backgroundColor: 'white'
+    },
+    viewDadosUsuario:{
+        backgroundColor: 'white'
+    },
+    loginBotaoSair:{
+        paddingLeft: 15,
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    loginTextoSair:{
+        paddingLeft: 5,
+        fontSize: 15,
+        fontWeight: 'bold',
+        color: 'black'
+    }
+
 })

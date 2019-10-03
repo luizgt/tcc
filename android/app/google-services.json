@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1028198951020",
+    "firebase_url": "https://logintcc-c3e6c.firebaseio.com",
+    "project_id": "logintcc-c3e6c",
+    "storage_bucket": "logintcc-c3e6c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1028198951020:android:a8b66e60fffff83bc45049",
+        "android_client_info": {
+          "package_name": "com.tcc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1028198951020-62fs25cuvgcqoud0krk454t7th63a457.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tcc",
+            "certificate_hash": "e08fa5673399d878ce57939676ec09bb4428fabb"
+          }
+        },
+        {
+          "client_id": "1028198951020-njroldl0914en8i2putl08jkr2jscmkb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2PNM7dvU6fVc_G1IQmWEI73mHDYIVKCo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1028198951020-njroldl0914en8i2putl08jkr2jscmkb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
