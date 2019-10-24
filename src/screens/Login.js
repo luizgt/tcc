@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, TouchableOpacity, ScrollView, Image, Text } from 'react-native';
+import { View, TouchableOpacity, Image, Text } from 'react-native';
 import { GoogleSignin, GoogleSigninButton, statusCodes } from 'react-native-google-signin';
 
 import { getUser } from '../services/Realm';
@@ -39,21 +39,22 @@ export default class Login extends Component{
             this.escreverUsuarioNovo();
         } catch (error) {
             if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-                console.warn(error);
+                // console.warn(error);
             } else if (error.code === statusCodes.IN_PROGRESS) {
-                console.warn(error);
+                // console.warn(error);
             } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-                console.warn(error);            
+                // console.warn(error);            
             } else {
+                alert(error);
                 this.getCurrentUser();
                 this.getCurrentUserInfo();
             }
         }
     };
-    
+
     signOut = async () => {
         try {
-          this.apagarUsuarioAntigo();
+          await this.apagarUsuarioAntigo();
           
           await GoogleSignin.revokeAccess();
           await GoogleSignin.signOut();
@@ -62,13 +63,12 @@ export default class Login extends Component{
         } catch (error) {
           console.error(error);
         }
-      };
+    };
 
     getCurrentUser = async () => {
         const currentUser = await GoogleSignin.getCurrentUser();
         this.setState({ currentUser });
-        alert(this.state.userInfo);
-      };
+    };
 
     getCurrentUserInfo = async () => {
         try {
@@ -84,9 +84,8 @@ export default class Login extends Component{
     };
 
     async loadRepository(){
-
         const realm = await getUser();
-        const data = await realm.objects('User');
+        const data = realm.objects('User');
         let auxParaPegarUsuario;
         
         console.warn(data)
@@ -102,7 +101,7 @@ export default class Login extends Component{
     }
 
     async escreverUsuarioNovo(){
-        const data = await {
+        const data = {
             id: Math.floor(Date.now() / 1000),
 
             nomeUsuario: this.state.userInfo.user.name === undefined||null ? 'Vazio' : this.state.userInfo.user.name,
@@ -133,17 +132,20 @@ export default class Login extends Component{
     async apagarUsuarioAntigo(){
         const realm = await getUser();                      //abrindo conexao com banco
         
-        const Usuario = await realm.objects('User');        //recebendo objetos do banco de usuarios
+        const Usuarios = realm.objects('User');        //recebendo objetos do banco de usuarios
 
-        realm.write(() => {                                 //sobrescrevendo objeto recebido
-            realm.delete(Usuario[0]);                       //
-        })                                                  //
+        Usuarios.map(usuario =>(
+            realm.write(() => {                                 //deletando objeto recebido
+                realm.delete(usuario);                       //
+            })                                                  //
+        ))
+        
 
         this.setState({             //setando variavel de login
             logado: false           //
         })                          //
 
-        realm.close();
+        await realm.close();
     }
 
     render(){

@@ -103,6 +103,11 @@ export default StyleSheet.create({
         borderRadius: 20, 
         alignItems: 'center'
     },
+    mapaFoto:{
+        width: 250, 
+        height: 300,
+        margin: 10
+    },
     infoCallOut: {
         backgroundColor: '#FFA500',
         borderRadius: 10

@@ -13,19 +13,16 @@ import {
     SensorTypes
   } from "react-native-sensors";
 
-import { GoogleSignin } from 'react-native-google-signin';
-
 import Estilo from '../css/Estilos'
 import getRealm, {getUser} from '../services/Realm';
 
-var magX, magY, magZ;
 var ext;
 
 export default class EnviaDados extends Component{
 
     state = {       //estado inicial
+        //dados para enviar
         image: null,
-        error: null,
         latitude: 0,
         longitude: 0,
         accuracy: 0,
@@ -36,9 +33,16 @@ export default class EnviaDados extends Component{
         perguntas:[],
         respostas:[],
         usuario: [],
-        magnetometer: '0',
+        direcao: null,
+        magX: null, 
+        magY: null, 
+        magZ: null,
 
+        //variaveis para controle
+        error: null,
+        coordenadas: [],
         selected: false,
+        logado: false,
 
         radioButtons: [
             {
@@ -60,8 +64,6 @@ export default class EnviaDados extends Component{
               size: 13,
             }
         ],
-
-        logado: false,
     }
 
     async componentDidMount(){
@@ -75,6 +77,16 @@ export default class EnviaDados extends Component{
         await this.loadRepository();
 
         this._toggle();
+
+        magnetometer.subscribe(async({ x, y, z }) => {
+            this.setState({
+                coordenadas:{
+                    coordX: JSON.stringify(x),
+                    coordY: JSON.stringify(y),
+                    coordZ: JSON.stringify(z)
+                }
+            })
+        });
     }
 
     tirarFoto = async () =>{
@@ -83,26 +95,32 @@ export default class EnviaDados extends Component{
             maxWidth: 800,
         }, res=>{
             if(!res.didCancel){ //se a opção nao foi cancelada
-                magnetometer.subscribe(({ x, y, z }) => {          
-                    magX = x;
-                    magY = y;
-                    magZ = z;
-                });
-                
+                            
+
                 this.setState({image: {uri: res.uri, base64: res.data}})    //setando imagem
 
-                var date = new Date().getDate(); //Current Date
-                var month = new Date().getMonth() + 1; //Current Month
-                var year = new Date().getFullYear(); //Current Year
-                var hours = new Date().getHours(); //Current Hours
-                var min = new Date().getMinutes(); //Current Minutes
-                var sec = new Date().getSeconds(); //Current Seconds
+                var date = new Date().getDate();        //Current Date
+                var month = new Date().getMonth() + 1;  //Current Month
+                var year = new Date().getFullYear();    //Current Year
+                var hours = new Date().getHours();      //Current Hours
+                var min = new Date().getMinutes();      //Current Minutes
+                var sec = new Date().getSeconds();      //Current Seconds
                 this.setState({
                     date: date + '/' + month + '/' + year + ' ' + hours + ':' + min + ':' + sec,
                 });
 
                 this.pegarLocalizacao();      // enquanto a localização for atualizada atualiza a renderizacao
 
+                //pegando valores do magnetometro
+                let auxMg = JSON.stringify(this.state.coordenadas);
+                auxMg = JSON.parse(auxMg);
+                this.setState({
+                    magX: auxMg.coordX,
+                    magY: auxMg.coordY,
+                    magZ: auxMg.coordZ,
+                    direcao: this._direction(this._degree(this.state.magnetometer)),
+                });
+                this._toggle();
             }
         })
     }
@@ -135,12 +153,13 @@ export default class EnviaDados extends Component{
                                 base64: this.state.image.base64,    //
                             },
                             extensao: ext,                          //.extensao do arquivo
-                            direcao: this._degree(this.state.magnetometer),       ////
-                            dataHora: this.state.date,              ////
+                            direcaoAngulo: this._degree(this.state.magnetometer),       ////
+                            direcao: this.state.direcao,
+                            dataHora: this.state.date,
                             magnetometro:{
-                                x: magX,
-                                y: magY,
-                                z: magZ,
+                                x: this.state.magX,
+                                y: this.state.magY,
+                                z: this.state.magZ,
                             },
                             usuario:{
                                 email: this.state.usuario.emailUsuario,
@@ -164,8 +183,17 @@ export default class EnviaDados extends Component{
         })             // atribuindo todos marcadores ao array de marcadores
         .catch((err) => alert(err))                                    // exibindo erro
 
-        this.setState({descricao: '', image: null}) //setando para valores iniciais
-        magX = magY = magZ = 0;
+        this.setState({
+            descricao: '', 
+            image: null,
+            magX: null,
+            magY: null,
+            magZ: null,
+            direcao: null,
+            acuracia: 0,
+            latitude: 0,
+            longitude: 0
+        }) //setando para valores iniciais
     }
 
     salvarRespostaNoState(index, pergunta){
@@ -187,13 +215,16 @@ export default class EnviaDados extends Component{
     pegarLocalizacao(){       //busca as coordenadas para atualizar a posicao dos pontos
         navigator.geolocation.getCurrentPosition(
             (pos) => {
-              this.setState({
-                latitude: pos.coords.latitude,
-                longitude: pos.coords.longitude,
-                accuracy: pos.coords.accuracy,
-                altitude: pos.coords.altitude,
-                error: null
-              });
+                posAuxiliar = JSON.stringify(pos);
+                posAuxiliar = JSON.parse(posAuxiliar);
+
+                this.setState({
+                    latitude: posAuxiliar.coords.latitude,
+                    longitude: posAuxiliar.coords.longitude,
+                    accuracy: posAuxiliar.coords.accuracy,
+                    altitude: posAuxiliar.coords.altitude,
+                    error: null
+                });
             },
             (error) => this.setState({ erro: error.message }),
             {   enableHighAccuracy: false,    //alta precisao
@@ -218,9 +249,9 @@ export default class EnviaDados extends Component{
             extensao: ext === undefined||null ? 'Vazio' : ext,
             direcao: this.state.magnetometer === undefined||null ? 'Vazio' : parseFloat(this._degree(this.state.magnetometer)),
             dataHora: this.state.date === undefined||null ? 'Vazio' : this.state.date,
-            x: magX === undefined||null ? 'Vazio' : magX.toString(),
-            y: magY === undefined||null ? 'Vazio' : magY.toString(),
-            z: magZ === undefined||null ? 'Vazio' : magZ.toString(),
+            x: this.state.magX === undefined||null ? 'Vazio' : this.state.magX.toString(),
+            y: this.state.magY === undefined||null ? 'Vazio' : this.state.magY.toString(),
+            z: this.state.magZ === undefined||null ? 'Vazio' : this.state.magZ.toString(),
             emailUsuario: this.state.usuario.emailUsuario === undefined||null ? 'Vazio' : this.state.usuario.emailUsuario,
             nomeUsuario: this.state.usuario.nomeUsuario === undefined||null ? 'Vazio' : this.state.usuario.nomeUsuario,
         }
@@ -232,7 +263,7 @@ export default class EnviaDados extends Component{
         });
         this.setState({descricao: '', image: null, selected: false}) //setando para valores iniciais
 
-        realm.close();
+        await realm.close();
     }
 
     async loadRepository(){
@@ -252,26 +283,8 @@ export default class EnviaDados extends Component{
                 logado: false
             });
         }
-        realm.close();
+        await realm.close();
     }
-
-
-    // async loadRepository(){
-    //     let realm = await getUser();
-    //     const data = await realm.objects('User');
-    //     console.warn(data);
-    //     if(data.length > 0){
-    //         let auxParaReceberUsuario = await JSON.stringify(data[0]);
-            
-    //         this.setState({
-    //             usuario: JSON.parse(auxParaReceberUsuario)
-    //         });
-    //         realm.close();
-    //     } else {
-    //         this.setState({usuario: null});
-    //         realm.close();
-    //     }
-    // }
 
     render(){
         return(
@@ -299,7 +312,7 @@ export default class EnviaDados extends Component{
                                         onPress={radioButtons => this.salvarRespostaNoState(index, pergunta.pergunta)}
                                     />
                                 </View>
-                                <Text key={index} style={{marginLeft:20}}>Selecionado: {this.state.perguntas[index]} {this.state.respostas[index]}</Text>
+                                {/* <Text key={index} style={{marginLeft:20}}>Selecionado: {this.state.perguntas[index]} {this.state.respostas[index]}</Text> */}
                             </View>
                         ))}
                     </View>
@@ -311,10 +324,10 @@ export default class EnviaDados extends Component{
                             <Text style={Estilo.dados}>Acuracia: {this.state.accuracy}</Text>
                             <Text style={Estilo.dados}>Altitude: {this.state.altitude}</Text>
                             <View style={Estilo.dadosMag}>
-                                <Text style={Estilo.dados}>Direção: {this._direction(this._degree(this.state.magnetometer))}</Text>
-                                <Text style={Estilo.dados}>X: {magX}</Text>
-                                <Text style={Estilo.dados}>Y: {magY}</Text>
-                                <Text style={Estilo.dados}>Z: {magZ}</Text>
+                                <Text style={Estilo.dados}>Direção: {this.state.direcao}</Text>
+                                <Text style={Estilo.dados}>X: {this.state.magX}</Text>
+                                <Text style={Estilo.dados}>Y: {this.state.magY}</Text>
+                                <Text style={Estilo.dados}>Z: {this.state.magZ}</Text>
                             </View>
                             <View style={Estilo.dadosMag}>
                                 <Text style={Estilo.dados}>{this.state.date}</Text>
@@ -343,10 +356,10 @@ export default class EnviaDados extends Component{
         setUpdateIntervalForType(SensorTypes.magnetometer, 1000);
         this._subscription = magnetometer.subscribe(
             sensorData => this.setState({magnetometer: this._angle(sensorData)}),
-            error => console.log("Sensor não disponível"),
-        );
+            error => console.log("Sensor não disponível")
+        )
     };
-   
+
     _unsubscribe = () => {
         this._subscription && this._subscription.unsubscribe();
         this._subscription = null;

@@ -60,7 +60,7 @@ export default class Map extends Component{
                 <MapView.Callout style={Estilos.infoCallOut}> 
                   <View style={Estilos.infoView}>
                     <Image
-                      style={{width: 250, height: 300, margin: 10}}
+                      style={Estilos.mapaFoto}
                       source={{uri: `data:image/${marker.extensao};base64,${marker.imagem.base64}`}}
                       />
                     <Text style={Estilos.legenda}>{marker.descricao}</Text>
