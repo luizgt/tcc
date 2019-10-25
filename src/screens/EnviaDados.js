@@ -26,7 +26,7 @@ export default class EnviaDados extends Component{
         latitude: 0,
         longitude: 0,
         accuracy: 0,
-        altitude: -1,
+        altitude: 0,
         descricao: '',
         extensao: '',
         formulario: [],
@@ -72,7 +72,7 @@ export default class EnviaDados extends Component{
         .then(perguntas => {
             this.setState({formulario: perguntas})
         })             // atribuindo todos marcadores ao array de marcadores
-        .catch((err) => alert(err))                                    // exibindo erro
+        .catch((err) => alert('Não foi possível obter as perguntas do servidor' + err)) /// exibindo erro
         
         await this.loadRepository();
 
@@ -168,20 +168,22 @@ export default class EnviaDados extends Component{
                         }),
                         headers: {"Content-Type": "application/json"}
                     }).catch(
-                        err => alert(err),
-                        this.salvarNoRepositorioOffline()
+                        err =>{ 
+                            alert('Dados não enviados ' + err),
+                            this.salvarNoRepositorioOffline()
+                        }
                     )
                     this.zerarRespostas();
             }//else
     }//salvar
 
     zerarRespostas = async () => {
-        await fetch('http://200.145.184.232:3013/formulario')                // consultando o banco e setando informacoes
-        .then(response => response.json())                             //
-        .then(perguntas => {
-            this.setState({formulario: perguntas})
-        })             // atribuindo todos marcadores ao array de marcadores
-        .catch((err) => alert(err))                                    // exibindo erro
+        // await fetch('http://200.145.184.232:3013/formulario')                // consultando o banco e setando informacoes
+        // .then(response => response.json())                             //
+        // .then(perguntas => {
+        //     this.setState({formulario: perguntas})
+        // })             // atribuindo todos marcadores ao array de marcadores
+        // .catch((err) => alert(err))                                    // exibindo erro
 
         this.setState({
             descricao: '', 
@@ -190,7 +192,7 @@ export default class EnviaDados extends Component{
             magY: null,
             magZ: null,
             direcao: null,
-            acuracia: 0,
+            accuracy: 0,
             latitude: 0,
             longitude: 0
         }) //setando para valores iniciais

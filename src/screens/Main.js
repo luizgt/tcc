@@ -47,7 +47,7 @@ const MenuRoutes ={
 }
 
 const MenuConfig = {
-    initialRouteName: 'EnviaDados',
+    initialRouteName: 'Login',
     tabBarOptions:{
         showLabel: false,
     }

@@ -88,7 +88,7 @@ export default class Login extends Component{
         const data = realm.objects('User');
         let auxParaPegarUsuario;
         
-        console.warn(data)
+        // console.warn(data)
         
         if(data.length == 1){
             auxParaPegarUsuario = JSON.stringify(data[0]);

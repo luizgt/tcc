@@ -42,7 +42,7 @@ export default class EnviaDados extends Component{
 
         let enviado = true;
 
-        fetch('http://200.145.184.232:3013/',{
+        await fetch('http://200.145.184.232:3013/',{
             method: 'POST',
             body: JSON.stringify({                  
                 coordinates:{
@@ -73,8 +73,10 @@ export default class EnviaDados extends Component{
             headers: {"Content-Type": "application/json"}
         })
         .catch(
-            err => alert(err),
-            enviado = false
+            err => {
+                alert('Dados não enviados ' + err),
+                enviado = false
+            }
         )
 
         if(enviado){
