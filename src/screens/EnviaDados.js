@@ -131,55 +131,48 @@ export default class EnviaDados extends Component{
         if(this.state.image == null) alert('Imagem não pode ser vazia!')
         else if(!this.state.logado) alert('Usuário não logado!')
            else{
-                ext = '';                                                  //variaveis para buscar extensao da imagem
+                ext = '';                                                   //variaveis para buscar extensao da imagem
                 var auxExtensao = this.state.image.uri.lastIndexOf('.')     //
 
                 for(let aux = auxExtensao+1; aux < this.state.image.uri.length; aux++)  //percorrendo o array para pegar a extensao
                     ext+= this.state.image.uri[aux];                                    //
+                    this.salvarNoRepositorioOffline()
 
-                    fetch('http://200.145.184.232:3013/',{       //MUDAR PARA O IP DA MAQUINA (SERVER)
-                        method: 'POST',
-                        body: JSON.stringify({                      // DADOS PARA O BANCO
-                            coordinates:{                           //.coordenadas do ponto
-                                latitude: this.state.latitude,      //
-                                longitude: this.state.longitude,    //    
-                            },                                      
-                            acuracia: this.state.accuracy,          //
-                            altitude: this.state.altitude,          //
-                            perguntas: this.state.perguntas,        //
-                            respostas:this.state.respostas,         //
-                            descricao: this.state.descricao,        //
-                            imagem:{
-                                base64: this.state.image.base64,    //
-                            },
-                            extensao: ext,                          //.extensao do arquivo
-                            direcaoAngulo: this._degree(this.state.magnetometer),       ////
-                            direcao: this.state.direcao,
-                            dataHora: this.state.date,
-                            magnetometro:{
-                                x: this.state.magX,
-                                y: this.state.magY,
-                                z: this.state.magZ,
-                            },
-                            usuario:{
-                                email: this.state.usuario.emailUsuario,
-                                nome: this.state.usuario.nomeUsuario
-                            }
-                        }),
-                        headers: {"Content-Type": "application/json"}
-                    }).catch(
-                        err => alert('Dados não enviados, salvos na biblioteca!')
-                    )
-                    .finally(
-                        this.salvarNoRepositorioOffline()
-                    )
-                    // .catch(
-                    //     err =>{
-                    //         this.salvarNoRepositorioOffline()
-                    //     }
+                    // fetch('http://200.145.184.232:3013/',{       //MUDAR PARA O IP DA MAQUINA (SERVER)
+                    //     method: 'POST',
+                    //     body: JSON.stringify({                      // DADOS PARA O BANCO
+                    //         coordinates:{                           //.coordenadas do ponto
+                    //             latitude: this.state.latitude,      //
+                    //             longitude: this.state.longitude,    //    
+                    //         },                                      
+                    //         acuracia: this.state.accuracy,          //
+                    //         altitude: this.state.altitude,          //
+                    //         perguntas: this.state.perguntas,        //
+                    //         respostas:this.state.respostas,         //
+                    //         descricao: this.state.descricao,        //
+                    //         imagem:{
+                    //             base64: this.state.image.base64,    //
+                    //         },
+                    //         extensao: ext,                          //.extensao do arquivo
+                    //         direcaoAngulo: this._degree(this.state.magnetometer),       ////
+                    //         direcao: this.state.direcao,
+                    //         dataHora: this.state.date,
+                    //         magnetometro:{
+                    //             x: this.state.magX,
+                    //             y: this.state.magY,
+                    //             z: this.state.magZ,
+                    //         },
+                    //         usuario:{
+                    //             email: this.state.usuario.emailUsuario,
+                    //             nome: this.state.usuario.nomeUsuario
+                    //         }
+                    //     }),
+                    //     headers: {"Content-Type": "application/json"}
+                    // }).catch(
+                    //     err => alert('Dados não enviados, salvos na biblioteca!')
                     // )
-                    // .then(
-                    //     alert('Dados enviados!')
+                    // .finally(
+                    //     this.salvarNoRepositorioOffline()
                     // )
             }//else
     }//salvar
@@ -342,7 +335,7 @@ export default class EnviaDados extends Component{
                     </View>
 
                     <TouchableOpacity onPress={this.salvarNoBanco} style={Estilo.buttomEnviar}>
-                        <Icon name='arrow-right' size={25} color={'white'}/>
+                        <Icon name='save' size={25} color={'white'}/>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
