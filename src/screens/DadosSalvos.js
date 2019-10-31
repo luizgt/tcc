@@ -5,7 +5,7 @@ import getRealm from '../services/Realm';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 
-
+var dados = [];
 
 export default class EnviaDados extends Component{
     state = {
@@ -14,11 +14,19 @@ export default class EnviaDados extends Component{
 
     async loadRepository(){
         const realm = await getRealm();
-        const data = await realm.objects('Repository');
+        const data = realm.objects('Repository');
 
+        dados = [];
+
+        data.map(dado =>{
+            var auxCopiarDados = JSON.stringify(dado);
+            dados.push(JSON.parse(auxCopiarDados))
+        })
         this.setState({
-            Repositories: data
+            Repositories: dados
         });
+        
+        realm.close();
     }
 
     componentDidMount(){
@@ -33,7 +41,7 @@ export default class EnviaDados extends Component{
             realm.delete(ponto);
         });
 
-        this.loadRepository()
+        this.loadRepository();
     }
 
     async enviarAoBanco(id){
@@ -49,7 +57,7 @@ export default class EnviaDados extends Component{
                     latitude: ponto.latitude,
                     longitude: ponto.longitude,
                 },
-                acuracia: ponto.accuracy,
+                acuracia: ponto.acuracia,
                 altitude: ponto.altitude,
                 perguntas: ponto.perguntas,
                 respostas:ponto.respostas,
@@ -59,11 +67,11 @@ export default class EnviaDados extends Component{
                 },
                 extensao: ponto.extensao,
                 direcao: ponto.direcao,
-                dataHora: ponto.date,
+                dataHora: ponto.dataHora,
                 magnetometro:{
-                    x: ponto.magX,
-                    y: ponto.magY,
-                    z: ponto.magZ,
+                    x: ponto.x,
+                    y: ponto.y,
+                    z: ponto.z,
                 },
                 usuario:{
                     email: ponto.emailUsuario,
@@ -99,13 +107,16 @@ export default class EnviaDados extends Component{
                 </View>
                 {this.state.Repositories.map((Dado,index) => (
                     <View key={index}>
-
                         <View style={Estilo.dadosCard}>
                             <View style={Estilo.viewImagem}>
                                 <Image style={Estilo.dadosImagem} source={{uri: `data:image/${Dado.extensao};base64,${Dado.imagem}`}}/>
                             </View>
                             <View>
                                 <Text style={Estilo.dadosTexto}>DADOS</Text>           
+                                    <View style={Estilo.dadosViewTexto}>
+                                        <Text style={Estilo.dadosTexto}>Data: </Text>    
+                                        <Text style={Estilo.dadosInfo}>{Dado.dataHora}</Text>
+                                    </View>
                                     <View style={Estilo.dadosViewTexto}>
                                         <Text style={Estilo.dadosTexto}>Latitude: </Text>    
                                         <Text style={Estilo.dadosInfo}>{Dado.latitude}</Text>
@@ -124,11 +135,11 @@ export default class EnviaDados extends Component{
                                     </View>
                                     <View style={Estilo.dadosViewTexto}>
                                         <Text style={Estilo.dadosTexto}>Perguntas: </Text>   
-                                        <Text style={Estilo.dadosInfo}>{Dado.perguntas}</Text>
+                                        <Text style={Estilo.dadosInfo}>{Dado.perguntas.toString()}</Text>
                                     </View>
                                     <View style={Estilo.dadosViewTexto}>
                                         <Text style={Estilo.dadosTexto}>Respostas: </Text>   
-                                        <Text style={Estilo.dadosInfo}>{Dado.respostas}</Text>
+                                        <Text style={Estilo.dadosInfo}>{Dado.respostas.toString()}</Text>
                                     </View>
                                     <View style={Estilo.dadosViewTexto}>
                                         <Text style={Estilo.dadosTexto}>Descrição: </Text>   
@@ -137,10 +148,6 @@ export default class EnviaDados extends Component{
                                     <View style={Estilo.dadosViewTexto}>
                                         <Text style={Estilo.dadosTexto}>Direção: </Text>   
                                         <Text style={Estilo.dadosInfo}>{Dado.direcao}º</Text>
-                                    </View>
-                                    <View style={Estilo.dadosViewTexto}>
-                                        <Text style={Estilo.dadosTexto}>Data: </Text>   
-                                        <Text style={Estilo.dadosInfo}>{Dado.dataHora}</Text>
                                     </View>
                                     <View style={Estilo.dadosViewTexto}>
                                         <Text style={Estilo.dadosTexto}>X: </Text>   

@@ -98,7 +98,7 @@ export default class EnviaDados extends Component{
                             
 
                 this.setState({image: {uri: res.uri, base64: res.data}})    //setando imagem
-
+                
                 var date = new Date().getDate();        //Current Date
                 var month = new Date().getMonth() + 1;  //Current Month
                 var year = new Date().getFullYear();    //Current Year
@@ -168,25 +168,26 @@ export default class EnviaDados extends Component{
                         }),
                         headers: {"Content-Type": "application/json"}
                     }).catch(
-                        err =>{ 
-                            alert('Dados não enviados ' + err),
-                            this.salvarNoRepositorioOffline()
-                        }
+                        err => alert('Dados não enviados, salvos na biblioteca!')
                     )
-                    this.zerarRespostas();
+                    .finally(
+                        this.salvarNoRepositorioOffline()
+                    )
+                    // .catch(
+                    //     err =>{
+                    //         this.salvarNoRepositorioOffline()
+                    //     }
+                    // )
+                    // .then(
+                    //     alert('Dados enviados!')
+                    // )
             }//else
     }//salvar
 
     zerarRespostas = async () => {
-        // await fetch('http://200.145.184.232:3013/formulario')                // consultando o banco e setando informacoes
-        // .then(response => response.json())                             //
-        // .then(perguntas => {
-        //     this.setState({formulario: perguntas})
-        // })             // atribuindo todos marcadores ao array de marcadores
-        // .catch((err) => alert(err))                                    // exibindo erro
-
         this.setState({
-            descricao: '', 
+            descricao: '',
+            date: '', 
             image: null,
             magX: null,
             magY: null,
@@ -194,7 +195,8 @@ export default class EnviaDados extends Component{
             direcao: null,
             accuracy: 0,
             latitude: 0,
-            longitude: 0
+            longitude: 0,
+            altitude: 0
         }) //setando para valores iniciais
     }
 
@@ -235,12 +237,12 @@ export default class EnviaDados extends Component{
         )
     }
 
-    async salvarNoRepositorioOffline(){     
-        const data = {
+    async salvarNoRepositorioOffline(){
+        const data = await {
             id: Math.floor(Date.now() / 1000),
 
-            latitude: this.state.latitude === undefined||null ? 'Vazio' : this.state.latitude,
-            longitude: this.state.longitude === undefined||null ? 'Vazio' : this.state.longitude,
+            latitude: this.state.latitude === undefined||null ? 0 : this.state.latitude,
+            longitude: this.state.longitude === undefined||null ? 0 : this.state.longitude,
 
             acuracia: this.state.accuracy === undefined||null ? 'Vazio' : this.state.accuracy,
             altitude: this.state.altitude === undefined||null ? 'Vazio' : this.state.altitude,
@@ -249,7 +251,7 @@ export default class EnviaDados extends Component{
             descricao: this.state.descricao === undefined||null ? 'Vazio' : this.state.descricao,
             imagem: this.state.image === undefined||null ? 'Vazio' : this.state.image.base64,
             extensao: ext === undefined||null ? 'Vazio' : ext,
-            direcao: this.state.magnetometer === undefined||null ? 'Vazio' : parseFloat(this._degree(this.state.magnetometer)),
+            direcao: this.state.magnetometer === undefined||null ? 0 : parseFloat(this._degree(this.state.magnetometer)),
             dataHora: this.state.date === undefined||null ? 'Vazio' : this.state.date,
             x: this.state.magX === undefined||null ? 'Vazio' : this.state.magX.toString(),
             y: this.state.magY === undefined||null ? 'Vazio' : this.state.magY.toString(),
@@ -263,9 +265,11 @@ export default class EnviaDados extends Component{
         realm.write(() =>{
             realm.create('Repository', data)
         });
-        this.setState({descricao: '', image: null, selected: false}) //setando para valores iniciais
-
+        
         await realm.close();
+
+        alert('Dados salvos no repositório!');
+        this.zerarRespostas();
     }
 
     async loadRepository(){
