@@ -1,31 +1,36 @@
 import React, {Component} from 'react'
-import {View, Text, TouchableOpacity, Image, ScrollView } from 'react-native'
-import Estilo from '../css/Estilos'
+import {View, Text, TouchableOpacity, Image, FlatList, ActivityIndicator } from 'react-native'
 import getRealm from '../services/Realm';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 
-var dados = [];
+import Estilo from '../css/Estilos'
 
 export default class EnviaDados extends Component{
     state = {
         Repositories: [],
+        page: 1,
+        loading: false,
     }
 
     async loadRepository(){
+        if (this.state.loading) return;
+        
         const realm = await getRealm();
-        const data = realm.objects('Repository');
+        var data = realm.objects('Repository');
 
-        dados = [];
+        var dados = [];
 
         data.map(dado =>{
             var auxCopiarDados = JSON.stringify(dado);
-            dados.push(JSON.parse(auxCopiarDados))
+            dados.push(JSON.parse(auxCopiarDados));
         })
+
         this.setState({
-            Repositories: dados
+            Repositories: dados,
+            loading: true
         });
-        
+
         realm.close();
     }
 
@@ -36,7 +41,7 @@ export default class EnviaDados extends Component{
     async deletar(id){
         const realm = await getRealm();
 
-        realm.write(() => {
+        realm.write(async () => {
             let ponto = realm.objectForPrimaryKey('Repository', id);
             realm.delete(ponto);
         });
@@ -97,108 +102,124 @@ export default class EnviaDados extends Component{
         }
     }
 
+    renderFooter = () => {
+        if (this.state.loading) return null;
+        else{
+            this.setState({
+                loading:true
+            })
+            return (
+                <View style={Estilo.footerGaleria}>
+                    <ActivityIndicator />
+                </View>
+            );
+        }
+    };
+
+    renderItem = ({ item }) => (
+        <View style={Estilo.dadosCard}>
+            <View style={Estilo.viewImagem}>
+                <Image style={Estilo.dadosImagem} source={{uri: `data:image/${item.extensao};base64,${item.imagem}`}}/>
+            </View>
+            <View>
+                <Text style={Estilo.dadosTexto}>DADOS</Text>           
+                    <View style={Estilo.dadosViewTexto}>
+                        <Text style={Estilo.dadosTexto}>Data: </Text>    
+                        <Text style={Estilo.dadosInfo}>{item.dataHora}</Text>
+                    </View>
+                    <View style={Estilo.dadosViewTexto}>
+                        <Text style={Estilo.dadosTexto}>Latitude: </Text>    
+                        <Text style={Estilo.dadosInfo}>{item.latitude}</Text>
+                    </View>
+                    <View style={Estilo.dadosViewTexto}>
+                        <Text style={Estilo.dadosTexto}>Longitude: </Text>   
+                        <Text style={Estilo.dadosInfo}>{item.longitude}</Text>
+                    </View>
+                    <View style={Estilo.dadosViewTexto}>
+                        <Text style={Estilo.dadosTexto}>Acuracia: </Text>   
+                        <Text style={Estilo.dadosInfo}>{item.acuracia}</Text>
+                    </View>
+                    <View style={Estilo.dadosViewTexto}>
+                        <Text style={Estilo.dadosTexto}>Altitude: </Text>   
+                        <Text style={Estilo.dadosInfo}>{item.altitude}</Text>
+                    </View>
+                    <View style={Estilo.dadosViewTexto}>
+                        <Text style={Estilo.dadosTexto}>Perguntas: </Text>   
+                        <Text style={Estilo.dadosInfo}>{item.perguntas.toString()}</Text>
+                    </View>
+                    <View style={Estilo.dadosViewTexto}>
+                        <Text style={Estilo.dadosTexto}>Respostas: </Text>   
+                        <Text style={Estilo.dadosInfo}>{item.respostas.toString()}</Text>
+                    </View>
+                    <View style={Estilo.dadosViewTexto}>
+                        <Text style={Estilo.dadosTexto}>Descrição: </Text>   
+                        <Text style={Estilo.dadosInfo}>{item.descricao}</Text>
+                    </View>
+                    <View style={Estilo.dadosViewTexto}>
+                        <Text style={Estilo.dadosTexto}>Direção: </Text>   
+                        <Text style={Estilo.dadosInfo}>{item.direcao}º</Text>
+                    </View>
+                    <View style={Estilo.dadosViewTexto}>
+                        <Text style={Estilo.dadosTexto}>X: </Text>   
+                        <Text style={Estilo.dadosInfo}>{item.x}</Text>
+                    </View>
+                    <View style={Estilo.dadosViewTexto}>
+                        <Text style={Estilo.dadosTexto}>Y: </Text>   
+                        <Text style={Estilo.dadosInfo}>{item.y}</Text>
+                    </View>
+                    <View style={Estilo.dadosViewTexto}>
+                        <Text style={Estilo.dadosTexto}>Z: </Text>   
+                        <Text style={Estilo.dadosInfo}>{item.z}</Text>
+                    </View>
+                    <View style={Estilo.dadosViewTexto}>
+                        <Text style={Estilo.dadosTexto}>Nome: </Text>   
+                        <Text style={Estilo.dadosInfo}>{item.nomeUsuario}</Text>
+                    </View>
+                    <View style={Estilo.dadosViewTexto}>
+                        <Text style={Estilo.dadosTexto}>Email: </Text>   
+                        <Text style={Estilo.dadosInfo}>{item.emailUsuario}</Text>
+                    </View>
+            </View>
+            <View style={Estilo.dadosBotoes}>
+                <TouchableOpacity onPress={() => this.deletar(item.id)} style={Estilo.buttomDelete}>
+                    <MaterialIcon name='delete-empty' size={25} color={'white'}/>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => this.enviarAoBanco(item.id)} style={Estilo.buttomEnviar}>
+                    <Icon name='arrow-right' size={25} color={'white'}/>
+                </TouchableOpacity>
+            </View>   
+        </View>
+    );
+
     render(){
         const listaComItem = 
-            <View>
-                <View style={Estilo.dadosAtualizar}>
-                    <TouchableOpacity onPress={() => this.loadRepository()} style={Estilo.buttomEnviar}>
-                                <MaterialIcon name='reload' size={25} color={'white'}/>
-                    </TouchableOpacity>
-                </View>
-                {this.state.Repositories.map((Dado,index) => (
-                    <View key={index}>
-                        <View style={Estilo.dadosCard}>
-                            <View style={Estilo.viewImagem}>
-                                <Image style={Estilo.dadosImagem} source={{uri: `data:image/${Dado.extensao};base64,${Dado.imagem}`}}/>
-                            </View>
-                            <View>
-                                <Text style={Estilo.dadosTexto}>DADOS</Text>           
-                                    <View style={Estilo.dadosViewTexto}>
-                                        <Text style={Estilo.dadosTexto}>Data: </Text>    
-                                        <Text style={Estilo.dadosInfo}>{Dado.dataHora}</Text>
-                                    </View>
-                                    <View style={Estilo.dadosViewTexto}>
-                                        <Text style={Estilo.dadosTexto}>Latitude: </Text>    
-                                        <Text style={Estilo.dadosInfo}>{Dado.latitude}</Text>
-                                    </View>
-                                    <View style={Estilo.dadosViewTexto}>
-                                        <Text style={Estilo.dadosTexto}>Longitude: </Text>   
-                                        <Text style={Estilo.dadosInfo}>{Dado.longitude}</Text>
-                                    </View>
-                                    <View style={Estilo.dadosViewTexto}>
-                                        <Text style={Estilo.dadosTexto}>Acuracia: </Text>   
-                                        <Text style={Estilo.dadosInfo}>{Dado.acuracia}</Text>
-                                    </View>
-                                    <View style={Estilo.dadosViewTexto}>
-                                        <Text style={Estilo.dadosTexto}>Altitude: </Text>   
-                                        <Text style={Estilo.dadosInfo}>{Dado.altitude}</Text>
-                                    </View>
-                                    <View style={Estilo.dadosViewTexto}>
-                                        <Text style={Estilo.dadosTexto}>Perguntas: </Text>   
-                                        <Text style={Estilo.dadosInfo}>{Dado.perguntas.toString()}</Text>
-                                    </View>
-                                    <View style={Estilo.dadosViewTexto}>
-                                        <Text style={Estilo.dadosTexto}>Respostas: </Text>   
-                                        <Text style={Estilo.dadosInfo}>{Dado.respostas.toString()}</Text>
-                                    </View>
-                                    <View style={Estilo.dadosViewTexto}>
-                                        <Text style={Estilo.dadosTexto}>Descrição: </Text>   
-                                        <Text style={Estilo.dadosInfo}>{Dado.descricao}</Text>
-                                    </View>
-                                    <View style={Estilo.dadosViewTexto}>
-                                        <Text style={Estilo.dadosTexto}>Direção: </Text>   
-                                        <Text style={Estilo.dadosInfo}>{Dado.direcao}º</Text>
-                                    </View>
-                                    <View style={Estilo.dadosViewTexto}>
-                                        <Text style={Estilo.dadosTexto}>X: </Text>   
-                                        <Text style={Estilo.dadosInfo}>{Dado.x}</Text>
-                                    </View>
-                                    <View style={Estilo.dadosViewTexto}>
-                                        <Text style={Estilo.dadosTexto}>Y: </Text>   
-                                        <Text style={Estilo.dadosInfo}>{Dado.y}</Text>
-                                    </View>
-                                    <View style={Estilo.dadosViewTexto}>
-                                        <Text style={Estilo.dadosTexto}>Z: </Text>   
-                                        <Text style={Estilo.dadosInfo}>{Dado.z}</Text>
-                                    </View>
-                                    <View style={Estilo.dadosViewTexto}>
-                                        <Text style={Estilo.dadosTexto}>Nome: </Text>   
-                                        <Text style={Estilo.dadosInfo}>{Dado.nomeUsuario}</Text>
-                                    </View>
-                                    <View style={Estilo.dadosViewTexto}>
-                                        <Text style={Estilo.dadosTexto}>Email: </Text>   
-                                        <Text style={Estilo.dadosInfo}>{Dado.emailUsuario}</Text>
-                                    </View>
-                            </View>
-                            <View style={Estilo.dadosBotoes}>
-                                <TouchableOpacity onPress={() => this.deletar(Dado.id)} style={Estilo.buttomDelete}>
-                                    <MaterialIcon name='delete-empty' size={25} color={'white'}/>
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={() => this.enviarAoBanco(Dado.id)} style={Estilo.buttomEnviar}>
-                                    <Icon name='arrow-right' size={25} color={'white'}/>
-                                </TouchableOpacity>
-                            </View>   
-                        </View>
-                    </View>
-                ))}
-            </View>
+            <FlatList
+                style={Estilo.flat}
+                data={this.state.Repositories}
+                renderItem={this.renderItem}
+                keyExtractor={(item, index) => String(index)}
+                onEndReached={() => this.loadRepository()}
+                onEndReachedThreshold={0.1}
+                ListFooterComponent={this.renderFooter}
+            >
+            </FlatList>
 
         const listaVazia = <View>
                 <View style={Estilo.MensagemNenhumItemSalvo}>
-
                     <Text style={Estilo.NenhumItemSalvo}>Nenhum item salvo!</Text>
-                    <View style={Estilo.dadosBotoes}>
-                        <TouchableOpacity onPress={() => this.loadRepository()} style={Estilo.buttomEnviar}>
-                            <MaterialIcon name='reload' size={25} color={'white'}/>
-                        </TouchableOpacity>
-                    </View>
                 </View>
             </View>
 
         return(
-            <ScrollView style={Estilo.dadosPrincipal}>
+            <View>
+                <View style={Estilo.headerGaleria}>
+                    <Text style={Estilo.tituloHeaderDadosSalvos}>Galeria</Text>
+                    <TouchableOpacity style={Estilo.botaoAtualizar} onPress={() => this.loadRepository()} style={Estilo.buttomEnviar}>
+                        <MaterialIcon name='reload' size={25} color={'white'}/>
+                    </TouchableOpacity>
+                </View>
                 {this.state.Repositories.length > 0 ? listaComItem : listaVazia}
-            </ScrollView>
+            </View>
         )
     }
 }

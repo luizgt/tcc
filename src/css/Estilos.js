@@ -150,7 +150,7 @@ export default StyleSheet.create({
         borderColor: '#FFAE40',
         borderWidth: 2,
         borderRadius: 10,
-        marginBottom: 15,
+        marginBottom: 30,
     },
     dadosTexto:{
         color: '#000',
@@ -267,6 +267,40 @@ export default StyleSheet.create({
         fontSize: 15,
         fontWeight: 'bold',
         color: 'black'
-    }
+    },
 
+    list: {
+        paddingHorizontal: 20,
+      },
+
+    listItem: {
+    backgroundColor: '#EEE',
+    marginTop: 20,
+    padding: 30,
+    },
+
+    flat:{
+        marginBottom: 30
+    },
+
+    footerGaleria:{
+        marginBottom: 30
+    },
+
+    headerGaleria:{
+        display:'flex',
+        flexDirection:'row',
+        
+        marginBottom:5,
+        marginLeft:10,
+        marginTop:10,
+        
+        justifyContent:'space-between',
+        alignItems:'center',
+    },
+
+    tituloHeaderDadosSalvos:{
+        fontSize:50,
+        fontWeight:'bold'
+    }
 })

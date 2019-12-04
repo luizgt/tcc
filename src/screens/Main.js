@@ -47,7 +47,7 @@ const MenuRoutes ={
 }
 
 const MenuConfig = {
-    initialRouteName: 'Login',
+    initialRouteName: 'DadosSalvos',
     tabBarOptions:{
         showLabel: false,
     }

@@ -129,7 +129,7 @@ export default class EnviaDados extends Component{
         await this.loadRepository();  //verificando se o usuario logou
 
         if(this.state.image == null) alert('Imagem não pode ser vazia!')
-        else if(!this.state.logado) alert('Usuário não logado!')
+        // else if(!this.state.logado) alert('Usuário não logado!')
            else{
                 ext = '';                                                   //variaveis para buscar extensao da imagem
                 var auxExtensao = this.state.image.uri.lastIndexOf('.')     //
