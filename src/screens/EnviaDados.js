@@ -67,17 +67,17 @@ export default class EnviaDados extends Component{
     }
 
     async componentDidMount(){
-        fetch('http://200.145.184.232:3013/formulario')                // consultando o banco e setando informacoes
+        fetch('http://186.217.108.95:3013/formulario')                // consultando o banco e setando informacoes
         .then(response => response.json())                             //
         .then(perguntas => {
             this.setState({formulario: perguntas})
         })             // atribuindo todos marcadores ao array de marcadores
-        .catch((err) => alert('Não foi possível obter as perguntas do servidor' + err)) /// exibindo erro
+        .catch((err) => alert('Não foi possível obter as perguntas do servidor: ' + err)) /// exibindo erro
         
         await this.loadRepository();
-
+        
         this._toggle();
-
+        
         magnetometer.subscribe(async({ x, y, z }) => {
             this.setState({
                 coordenadas:{
@@ -137,43 +137,6 @@ export default class EnviaDados extends Component{
                 for(let aux = auxExtensao+1; aux < this.state.image.uri.length; aux++)  //percorrendo o array para pegar a extensao
                     ext+= this.state.image.uri[aux];                                    //
                     this.salvarNoRepositorioOffline()
-
-                    // fetch('http://200.145.184.232:3013/',{       //MUDAR PARA O IP DA MAQUINA (SERVER)
-                    //     method: 'POST',
-                    //     body: JSON.stringify({                      // DADOS PARA O BANCO
-                    //         coordinates:{                           //.coordenadas do ponto
-                    //             latitude: this.state.latitude,      //
-                    //             longitude: this.state.longitude,    //    
-                    //         },                                      
-                    //         acuracia: this.state.accuracy,          //
-                    //         altitude: this.state.altitude,          //
-                    //         perguntas: this.state.perguntas,        //
-                    //         respostas:this.state.respostas,         //
-                    //         descricao: this.state.descricao,        //
-                    //         imagem:{
-                    //             base64: this.state.image.base64,    //
-                    //         },
-                    //         extensao: ext,                          //.extensao do arquivo
-                    //         direcaoAngulo: this._degree(this.state.magnetometer),       ////
-                    //         direcao: this.state.direcao,
-                    //         dataHora: this.state.date,
-                    //         magnetometro:{
-                    //             x: this.state.magX,
-                    //             y: this.state.magY,
-                    //             z: this.state.magZ,
-                    //         },
-                    //         usuario:{
-                    //             email: this.state.usuario.emailUsuario,
-                    //             nome: this.state.usuario.nomeUsuario
-                    //         }
-                    //     }),
-                    //     headers: {"Content-Type": "application/json"}
-                    // }).catch(
-                    //     err => alert('Dados não enviados, salvos na biblioteca!')
-                    // )
-                    // .finally(
-                    //     this.salvarNoRepositorioOffline()
-                    // )
             }//else
     }//salvar
 
