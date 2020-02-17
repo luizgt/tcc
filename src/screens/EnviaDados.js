@@ -3,6 +3,8 @@ import {View, Text, TouchableOpacity, TextInput, Image, ScrollView } from 'react
 import ImagePicker from 'react-native-image-picker'
 import { RadioGroup } from 'react-native-btr';
 import Icon from 'react-native-vector-icons/FontAwesome'
+import { GoogleSignin } from 'react-native-google-signin';
+
 
 import {
     // accelerometer,
@@ -67,14 +69,14 @@ export default class EnviaDados extends Component{
     }
 
     async componentDidMount(){
-        fetch('http://186.217.108.95:3013/formulario')                // consultando o banco e setando informacoes
+        fetch('http://186.217.106.105:3013/formulario')                // consultando o banco e setando informacoes
         .then(response => response.json())                             //
         .then(perguntas => {
             this.setState({formulario: perguntas})
         })             // atribuindo todos marcadores ao array de marcadores
         .catch((err) => alert('Não foi possível obter as perguntas do servidor: ' + err)) /// exibindo erro
         
-        await this.loadRepository();
+        // await this.loadRepository();
         
         this._toggle();
         
@@ -95,10 +97,9 @@ export default class EnviaDados extends Component{
             maxWidth: 800,
         }, res=>{
             if(!res.didCancel){ //se a opção nao foi cancelada
-                            
 
                 this.setState({image: {uri: res.uri, base64: res.data}})    //setando imagem
-                
+
                 var date = new Date().getDate();        //Current Date
                 var month = new Date().getMonth() + 1;  //Current Month
                 var year = new Date().getFullYear();    //Current Year
@@ -126,7 +127,7 @@ export default class EnviaDados extends Component{
     }
 
     salvarNoBanco = async () =>{
-        await this.loadRepository();  //verificando se o usuario logou
+        // await this.loadRepository();  //verificando se o usuario logou
 
         if(this.state.image == null) alert('Imagem não pode ser vazia!')
         // else if(!this.state.logado) alert('Usuário não logado!')
@@ -194,6 +195,8 @@ export default class EnviaDados extends Component{
     }
 
     async salvarNoRepositorioOffline(){
+        var usuario = await this.getCurrentUser();
+
         const data = await {
             id: Math.floor(Date.now() / 1000),
 
@@ -212,8 +215,8 @@ export default class EnviaDados extends Component{
             x: this.state.magX === undefined||null ? 'Vazio' : this.state.magX.toString(),
             y: this.state.magY === undefined||null ? 'Vazio' : this.state.magY.toString(),
             z: this.state.magZ === undefined||null ? 'Vazio' : this.state.magZ.toString(),
-            emailUsuario: this.state.usuario.emailUsuario === undefined||null ? 'Vazio' : this.state.usuario.emailUsuario,
-            nomeUsuario: this.state.usuario.nomeUsuario === undefined||null ? 'Vazio' : this.state.usuario.nomeUsuario,
+            emailUsuario: usuario.user.email === undefined||null ? 'Vazio' : usuario.user.email,
+            nomeUsuario: usuario.user.name === undefined||null ? 'Vazio' : usuario.user.name,
         }
 
         const realm = await getRealm();
@@ -228,25 +231,30 @@ export default class EnviaDados extends Component{
         this.zerarRespostas();
     }
 
-    async loadRepository(){
-        const realm = await getUser();
-        const data = await realm.objects('User');
+    getCurrentUser = async () => {
+        const currentUser = await GoogleSignin.getCurrentUser();
+        return currentUser;
+    };
+
+    // async loadRepository(){
+    //     const realm = await getUser();
+    //     const data = await realm.objects('User');
         
-        let auxParaPegarUsuario;
+    //     let auxParaPegarUsuario;
         
-        if(data.length == 1){
-            auxParaPegarUsuario = JSON.stringify(data[0]);
-            this.setState({
-                usuario: JSON.parse(auxParaPegarUsuario),
-                logado: true
-            });
-        }else{
-            this.setState({
-                logado: false
-            });
-        }
-        await realm.close();
-    }
+    //     if(data.length == 1){
+    //         auxParaPegarUsuario = JSON.stringify(data[0]);
+    //         this.setState({
+    //             usuario: JSON.parse(auxParaPegarUsuario),
+    //             logado: true
+    //         });
+    //     }else{
+    //         this.setState({
+    //             logado: false
+    //         });
+    //     }
+    //     await realm.close();
+    // }
 
     render(){
         return(

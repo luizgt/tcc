@@ -55,7 +55,7 @@ export default class Login extends Component{
     signOut = async () => {
         try {
           await this.apagarUsuarioAntigo();
-          
+
           await GoogleSignin.revokeAccess();
           await GoogleSignin.signOut();
 
@@ -104,9 +104,9 @@ export default class Login extends Component{
         const data = {
             id: Math.floor(Date.now() / 1000),
 
-            nomeUsuario: this.state.userInfo.user.name === undefined||null ? 'Vazio' : this.state.userInfo.user.name,
-            emailUsuario: this.state.userInfo.user.email === undefined||null ? 'Vazio' : this.state.userInfo.user.email,
-            fotoUsuario: this.state.userInfo.user.photo === undefined||null ? 'Vazio' : this.state.userInfo.user.photo
+            nomeUsuario: this.state.userInfo.user.name == undefined||null ? 'Vazio' : this.state.userInfo.user.name,
+            emailUsuario: this.state.userInfo.user.email == undefined||null ? 'Vazio' : this.state.userInfo.user.email,
+            fotoUsuario: this.state.userInfo.user.photo == undefined||null ? 'Vazio' : this.state.userInfo.user.photo
         }
 
         const realm = await getUser();          //registrando usuario no banco
@@ -162,10 +162,14 @@ export default class Login extends Component{
         const sair =    <View style={Estilo.viewFundoDadosUsuario}>
                             <View style={Estilo.viewDadosUsuario}>
                                 <View style={Estilo.loginViewImagemUsuario}>
-                                    <Image 
-                                        source = {{uri:this.state.usuario.fotoUsuario}}
-                                        style = {Estilo.loginImagemUsuario}
-                                        />
+                                    {
+                                        this.state.usuario.fotoUsuario === null ?
+                                        <Image source = {require('../images/imagemUsuario.png')}
+                                        style = {Estilo.loginImagemUsuario}/>
+                                        :
+                                        <Image source = {{uri:this.state.usuario.fotoUsuario}}
+                                        style = {Estilo.loginImagemUsuario}/>
+                                    }
                                 </View>
                                 <View style={Estilo.loginViewInformacaoUsuario}>
                                     <Text style={Estilo.loginNomeUsuario}>

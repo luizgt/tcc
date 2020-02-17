@@ -3,7 +3,7 @@ import {createBottomTabNavigator} from 'react-navigation'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
 import EnviaDados from './EnviaDados'
-import DadosSalvos from './DadosSalvos'
+import Galeria from './Galeria'
 import Mapa from './Mapa'
 import Login from './Login'
 
@@ -17,9 +17,9 @@ const MenuRoutes ={
                 <Icon name='camera' size={25} color={tintColor} />
         }
     },
-    DadosSalvos: {
-        name: 'DadosSalvos',
-        screen: DadosSalvos,
+    Galeria: {
+        name: 'Galeria',
+        screen: Galeria,
         navigationOptions:{
             title: 'Dados',
             tabBarIcon: ({tintColor}) =>
@@ -47,7 +47,7 @@ const MenuRoutes ={
 }
 
 const MenuConfig = {
-    initialRouteName: 'DadosSalvos',
+    initialRouteName: 'Galeria',
     tabBarOptions:{
         showLabel: false,
     }
