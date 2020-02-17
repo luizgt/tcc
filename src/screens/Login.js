@@ -2,29 +2,32 @@ import React, { Component } from 'react';
 import { View, TouchableOpacity, Image, Text } from 'react-native';
 import { GoogleSignin, GoogleSigninButton, statusCodes } from 'react-native-google-signin';
 
-import { getUser } from '../services/Realm';
-
 import Icon from 'react-native-vector-icons/SimpleLineIcons'
 import Estilo from '../css/Estilos'
 
 export default class Login extends Component{
     state={
-        userInfo : null,
-        logado: false,
-        usuario:{
-            fotoUsuario: 'qualquer',
-            emailUsuario: 'email',
-            nomeUsuario: 'nome'
+        userInfo:{
+            user:{
+                photo: "Sem infomação.",
+                email: "Sem infomação.",
+                name: "Sem infomação."
+            }
         },
-        User: null
+        logado: false
     }
 
     async componentDidMount(){
         GoogleSignin.configure({});
-        await this.loadRepository();
+        await this.isSignedIn();
     }
 
-    // Somewhere in your code
+    isSignedIn = async () => {
+        const isSignedIn = await GoogleSignin.isSignedIn();
+        this.setState({ logado: isSignedIn });
+        this.state.logado ? this.getCurrentUser() : null
+      };
+
     signIn = async () => {
         try {
             try {
@@ -33,10 +36,11 @@ export default class Login extends Component{
               } catch (err) {
                 console.error('play services are not available');
               }
-            const userInfo = await GoogleSignin.signIn();
-            this.setState({ userInfo });
+        const userInfo = await GoogleSignin.signIn();
+        
+        this.setState({ userInfo });
+        this.isSignedIn();
 
-            this.escreverUsuarioNovo();
         } catch (error) {
             if (error.code === statusCodes.SIGN_IN_CANCELLED) {
                 // console.warn(error);
@@ -54,20 +58,28 @@ export default class Login extends Component{
 
     signOut = async () => {
         try {
-          await this.apagarUsuarioAntigo();
-
           await GoogleSignin.revokeAccess();
           await GoogleSignin.signOut();
 
-          this.setState({userInfo: null})
+          this.setState({
+            userInfo :{
+                user:{
+                    photo: "vazio",
+                    email: "vazio",
+                    name: "vazio"
+                }
+            }
+          })
+          
         } catch (error) {
           console.error(error);
-        }
+        };
+        this.isSignedIn();
     };
 
     getCurrentUser = async () => {
-        const currentUser = await GoogleSignin.getCurrentUser();
-        this.setState({ currentUser });
+        const userInfo = await GoogleSignin.getCurrentUser();
+        this.setState({ userInfo });
     };
 
     getCurrentUserInfo = async () => {
@@ -82,71 +94,6 @@ export default class Login extends Component{
             }
         }
     };
-
-    async loadRepository(){
-        const realm = await getUser();
-        const data = realm.objects('User');
-        let auxParaPegarUsuario;
-        
-        // console.warn(data)
-        
-        if(data.length == 1){
-            auxParaPegarUsuario = JSON.stringify(data[0]);
-            this.setState({
-                usuario: JSON.parse(auxParaPegarUsuario),
-                logado: true
-            });
-        }
-        realm.close();
-    }
-
-    async escreverUsuarioNovo(){
-        const data = {
-            id: Math.floor(Date.now() / 1000),
-
-            nomeUsuario: this.state.userInfo.user.name == undefined||null ? 'Vazio' : this.state.userInfo.user.name,
-            emailUsuario: this.state.userInfo.user.email == undefined||null ? 'Vazio' : this.state.userInfo.user.email,
-            fotoUsuario: this.state.userInfo.user.photo == undefined||null ? 'Vazio' : this.state.userInfo.user.photo
-        }
-
-        const realm = await getUser();          //registrando usuario no banco
-        realm.write(() =>{                      //
-            realm.create('User', data);         //
-        });                                     //
-
-        this.setState({
-            usuario:{
-                nomeUsuario: this.state.userInfo.user.name,
-                emailUsuario: this.state.userInfo.user.email,
-                fotoUsuario: this.state.userInfo.user.photo,
-            }
-        });
-
-        this.setState({
-            logado: true,
-        })
-
-        realm.close();
-    }
-
-    async apagarUsuarioAntigo(){
-        const realm = await getUser();                      //abrindo conexao com banco
-        
-        const Usuarios = realm.objects('User');        //recebendo objetos do banco de usuarios
-
-        Usuarios.map(usuario =>(
-            realm.write(() => {                                 //deletando objeto recebido
-                realm.delete(usuario);                       //
-            })                                                  //
-        ))
-        
-
-        this.setState({             //setando variavel de login
-            logado: false           //
-        })                          //
-
-        await realm.close();
-    }
 
     render(){
         const login =   <View style={Estilo.loginView}>
@@ -163,20 +110,20 @@ export default class Login extends Component{
                             <View style={Estilo.viewDadosUsuario}>
                                 <View style={Estilo.loginViewImagemUsuario}>
                                     {
-                                        this.state.usuario.fotoUsuario === null ?
+                                        this.state.userInfo.user.photo === null ?
                                         <Image source = {require('../images/imagemUsuario.png')}
                                         style = {Estilo.loginImagemUsuario}/>
                                         :
-                                        <Image source = {{uri:this.state.usuario.fotoUsuario}}
+                                        <Image source = {{uri:this.state.userInfo.user.photo}}
                                         style = {Estilo.loginImagemUsuario}/>
                                     }
                                 </View>
                                 <View style={Estilo.loginViewInformacaoUsuario}>
                                     <Text style={Estilo.loginNomeUsuario}>
-                                        {this.state.usuario.nomeUsuario}
+                                        {this.state.userInfo.user.name}
                                     </Text>
                                     <Text style={Estilo.loginEmailUsuario}>
-                                        {this.state.usuario.emailUsuario}
+                                        {this.state.userInfo.user.email}
                                     </Text>
                                 </View>
                                 <TouchableOpacity style={Estilo.loginBotaoSair} onPress={this.signOut}>
@@ -185,10 +132,6 @@ export default class Login extends Component{
                             </View>
                         </View>
 
-        return(
-            
-                this.state.logado ? sair : login
-            
-        )
+        return( this.state.logado ? sair : login )
     }
 }
