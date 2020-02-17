@@ -27,14 +27,11 @@ export default class Map extends Component{
       (error) => this.setState({ erro: error.message }),
       { enableHighAccuracy: false, timeout: 1000, maximumAge: 10 },
     );
-    fetch('http://186.217.106.105:3013/')                       // consultando o banco e setando informacoes
-    .then(response => response.json())                          //
-    .then(markers => this.setState({ markers }))                // atribuindo todos marcadores ao array de marcadores
-    .catch((err) => alert(err))                                 // exibindo erro
+    this.carregarMarcadores();
   }
   
-  updateMarkers() {
-    fetch('http://186.217.106.105:3013/')                       // consultando o banco e setando informacoes
+  carregarMarcadores() {
+    fetch('http://192.168.0.15:3013/')                       // consultando o banco e setando informacoes
     .then(response => response.json())                          //
     .then(markers => this.setState({ markers }))                // atribuindo todos marcadores ao array de marcadores
     .catch((err) => alert(err))                                 // exibindo erro
@@ -65,7 +62,7 @@ export default class Map extends Component{
             ))}
           </MapView>
           <View style={Estilos.viewMapa}>
-            <TouchableOpacity onPress={() =>{this.updateMarkers()}} style={Estilos.buttomAtualizarMapa}>
+            <TouchableOpacity onPress={() =>{this.carregarMarcadores()}} style={Estilos.buttomAtualizarMapa}>
               <Icon name='reload' size={25} color={'white'}/>                
             </TouchableOpacity>
           </View>

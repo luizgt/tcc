@@ -47,7 +47,7 @@ const MenuRoutes ={
 }
 
 const MenuConfig = {
-    initialRouteName: 'Galeria',
+    initialRouteName: 'EnviaDados',
     tabBarOptions:{
         showLabel: false,
     }

@@ -5,6 +5,8 @@ import { RadioGroup } from 'react-native-btr';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import { GoogleSignin } from 'react-native-google-signin';
 
+import Estilo from '../css/Estilos'
+import getRealm from '../services/Realm';
 
 import {
     // accelerometer,
@@ -15,8 +17,6 @@ import {
     SensorTypes
   } from "react-native-sensors";
 
-import Estilo from '../css/Estilos'
-import getRealm, {getUser} from '../services/Realm';
 
 var ext;
 
@@ -34,7 +34,6 @@ export default class EnviaDados extends Component{
         formulario: [],
         perguntas:[],
         respostas:[],
-        usuario: [],
         direcao: null,
         magX: null, 
         magY: null, 
@@ -44,7 +43,6 @@ export default class EnviaDados extends Component{
         error: null,
         coordenadas: [],
         selected: false,
-        logado: false,
 
         radioButtons: [
             {
@@ -69,15 +67,13 @@ export default class EnviaDados extends Component{
     }
 
     async componentDidMount(){
-        fetch('http://186.217.106.105:3013/formulario')                // consultando o banco e setando informacoes
+        fetch('http://192.168.0.15:3013/formulario')                // consultando o banco e setando informacoes
         .then(response => response.json())                             //
         .then(perguntas => {
             this.setState({formulario: perguntas})
         })             // atribuindo todos marcadores ao array de marcadores
         .catch((err) => alert('Não foi possível obter as perguntas do servidor: ' + err)) /// exibindo erro
-        
-        // await this.loadRepository();
-        
+         
         this._toggle();
         
         magnetometer.subscribe(async({ x, y, z }) => {
@@ -127,10 +123,7 @@ export default class EnviaDados extends Component{
     }
 
     salvarNoBanco = async () =>{
-        // await this.loadRepository();  //verificando se o usuario logou
-
         if(this.state.image == null) alert('Imagem não pode ser vazia!')
-        // else if(!this.state.logado) alert('Usuário não logado!')
            else{
                 ext = '';                                                   //variaveis para buscar extensao da imagem
                 var auxExtensao = this.state.image.uri.lastIndexOf('.')     //
@@ -215,8 +208,8 @@ export default class EnviaDados extends Component{
             x: this.state.magX === undefined||null ? 'Vazio' : this.state.magX.toString(),
             y: this.state.magY === undefined||null ? 'Vazio' : this.state.magY.toString(),
             z: this.state.magZ === undefined||null ? 'Vazio' : this.state.magZ.toString(),
-            emailUsuario: usuario.user.email === undefined||null ? 'Vazio' : usuario.user.email,
-            nomeUsuario: usuario.user.name === undefined||null ? 'Vazio' : usuario.user.name,
+            emailUsuario: usuario.user.email === undefined||null ? 'Indefinido' : usuario.user.email,
+            nomeUsuario: usuario.user.name === undefined||null ? 'Indefinido' : usuario.user.name,
         }
 
         const realm = await getRealm();
@@ -235,26 +228,6 @@ export default class EnviaDados extends Component{
         const currentUser = await GoogleSignin.getCurrentUser();
         return currentUser;
     };
-
-    // async loadRepository(){
-    //     const realm = await getUser();
-    //     const data = await realm.objects('User');
-        
-    //     let auxParaPegarUsuario;
-        
-    //     if(data.length == 1){
-    //         auxParaPegarUsuario = JSON.stringify(data[0]);
-    //         this.setState({
-    //             usuario: JSON.parse(auxParaPegarUsuario),
-    //             logado: true
-    //         });
-    //     }else{
-    //         this.setState({
-    //             logado: false
-    //         });
-    //     }
-    //     await realm.close();
-    // }
 
     render(){
         return(
