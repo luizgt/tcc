@@ -31,7 +31,7 @@ export default class Map extends Component{
   }
   
   carregarMarcadores() {
-    fetch('http://192.168.0.15:3013/')                       // consultando o banco e setando informacoes
+    fetch('http://200.145.184.207:3013/')                       // consultando o banco e setando informacoes
     .then(response => response.json())                          //
     .then(markers => this.setState({ markers }))                // atribuindo todos marcadores ao array de marcadores
     .catch((err) => alert(err))                                 // exibindo erro

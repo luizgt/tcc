@@ -67,7 +67,7 @@ export default class EnviaDados extends Component{
     }
 
     async componentDidMount(){
-        fetch('http://192.168.0.15:3013/formulario')                // consultando o banco e setando informacoes
+        fetch('http://200.145.184.207:3013/formulario')                // consultando o banco e setando informacoes
         .then(response => response.json())                             //
         .then(perguntas => {
             this.setState({formulario: perguntas})
