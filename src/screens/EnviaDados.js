@@ -1,11 +1,11 @@
-import React, {Component} from 'react'
-import {View, Text, TouchableOpacity, TextInput, Image, ScrollView } from 'react-native'
-import ImagePicker from 'react-native-image-picker'
+import React, {Component} from 'react';
+import {View, Text, TouchableOpacity, TextInput, Image, ScrollView } from 'react-native';
+import ImagePicker from 'react-native-image-picker';
 import { RadioGroup } from 'react-native-btr';
-import Icon from 'react-native-vector-icons/FontAwesome'
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { GoogleSignin } from 'react-native-google-signin';
 
-import Estilo from '../css/Estilos'
+import Estilo from '../css/Estilos';
 import getRealm from '../services/Realm';
 
 import {
@@ -17,13 +17,11 @@ import {
     SensorTypes
   } from "react-native-sensors";
 
-
 var ext;
 
 export default class EnviaDados extends Component{
 
-    state = {       //estado inicial
-        //dados para enviar
+    state = {
         image: null,
         latitude: 0,
         longitude: 0,
@@ -39,7 +37,7 @@ export default class EnviaDados extends Component{
         magY: null, 
         magZ: null,
 
-        //variaveis para controle
+        //variaveis de controle
         error: null,
         coordenadas: [],
         selected: false,
@@ -124,15 +122,16 @@ export default class EnviaDados extends Component{
 
     salvarNoBanco = async () =>{
         if(this.state.image == null) alert('Imagem não pode ser vazia!')
-           else{
-                ext = '';                                                   //variaveis para buscar extensao da imagem
-                var auxExtensao = this.state.image.uri.lastIndexOf('.')     //
+        else if(this.state.latitude == 0 || this.state.longitude == 0) alert('Coordenadas indisponíveis, favor ativar localização no dispositivo!')
+            else{
+                    ext = '';                                                   //variaveis para buscar extensao da imagem
+                    var auxExtensao = this.state.image.uri.lastIndexOf('.')     //
 
-                for(let aux = auxExtensao+1; aux < this.state.image.uri.length; aux++)  //percorrendo o array para pegar a extensao
-                    ext+= this.state.image.uri[aux];                                    //
-                    this.salvarNoRepositorioOffline()
-            }//else
-    }//salvar
+                    for(let aux = auxExtensao+1; aux < this.state.image.uri.length; aux++)  //percorrendo o array para pegar a extensao
+                        ext+= this.state.image.uri[aux];                                    //
+                        this.salvarNoRepositorioOffline()
+                }
+    }
 
     zerarRespostas = async () => {
         this.setState({
