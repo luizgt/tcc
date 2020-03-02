@@ -211,7 +211,7 @@ export default class Galeria extends Component {
         </View>
 
         return (
-            <View>
+            <View style={{backgroundColor:"#fff",flex:1}}>
                 <View style={Estilo.headerGaleria}>
                     <Text style={Estilo.tituloHeaderDadosSalvos}>Galeria</Text>
                     <TouchableOpacity style={Estilo.botaoAtualizar} onPress={() => this.loadRepository()} style={Estilo.buttomEnviar}>

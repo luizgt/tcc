@@ -3,7 +3,8 @@ import { StyleSheet, Dimensions, Platform } from 'react-native'
 export default StyleSheet.create({
     container:{
         flex: 1,
-        alignItems: 'center'
+        alignItems: 'center',
+        backgroundColor:'#fff'
     },
     dados:{
         color: '#000',
@@ -216,7 +217,8 @@ export default StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems:'center',
-        paddingTop: 100
+        flex:1,
+        backgroundColor:"#fff"
     },
     loginTitulo:{
         fontSize: 25,
@@ -297,6 +299,7 @@ export default StyleSheet.create({
         
         justifyContent:'space-between',
         alignItems:'center',
+        backgroundColor:"#fff"
     },
 
     tituloHeaderDadosSalvos:{
