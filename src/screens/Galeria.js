@@ -56,7 +56,7 @@ export default class Galeria extends Component {
 
         let enviado = true;
         
-        await fetch('http://200.145.184.207:3013', {
+        await fetch('http://192.168.0.13:3013/', {
             method: 'POST',
             body: JSON.stringify({
                 coordinates: {

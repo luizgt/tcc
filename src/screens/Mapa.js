@@ -1,11 +1,11 @@
-import MapView, {Marker} from 'react-native-maps'
-import React, {Component} from 'react'
-import {Image, Text, TouchableOpacity, View, ImageBackground} from 'react-native'
+import MapView, { Marker } from 'react-native-maps'
+import React, { Component } from 'react'
+import { Image, Text, TouchableOpacity, View, ImageBackground } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import Estilos from '../css/Estilos'
 
-export default class Map extends Component{
+export default class Map extends Component {
   state = {
     latitude: 0,      // para renderizar mapa
     longitude: 0,     //
@@ -13,60 +13,85 @@ export default class Map extends Component{
   }
 
   componentDidMount() {   //invocado imediatamente apos a construcao do componente 
-    navigator.geolocation.getCurrentPosition(   //pegando posicao para renderizacao do mapa
+    this.carregarMarcadores();
+    this.carregarPosicaoUsuario();
+  }
+
+  async carregarMarcadores() {
+    await fetch('http://192.168.0.13:3013')                       // consultando o banco e setando informacoes
+      .then(response => response.json())                          //
+      .then(markers => this.setState({ markers }))                // atribuindo todos marcadores ao array de marcadores
+      .catch((err) => alert(err))                                 // exibindo erro
+  }
+
+  carregarPosicaoUsuario(){
+    navigator.geolocation.getCurrentPosition(
       (pos) => {
-        this.setState({
-          region: {
-            latitude: pos.coords.latitude,
-            longitude: pos.coords.latitude,
-            latitudeDelta: 0.015,
-            longitudeDelta: 0.0121
-          }
-        });
+          posAuxiliar = JSON.stringify(pos);
+          posAuxiliar = JSON.parse(posAuxiliar);
+
+          this.setState({
+              latitude: posAuxiliar.coords.latitude,
+              longitude: posAuxiliar.coords.longitude,
+              accuracy: posAuxiliar.coords.accuracy,
+              altitude: posAuxiliar.coords.altitude,
+              error: null
+          });
       },
       (error) => this.setState({ erro: error.message }),
-      { enableHighAccuracy: false, timeout: 1000, maximumAge: 10 },
-    );
-    this.carregarMarcadores();
+      {   enableHighAccuracy: false,    //alta precisao
+          timeout: 20000,             //tempo para executar antes de retornar erro
+          maximumAge: 1000 },         //tempo permitido de cache do dispositivo
+    )
   }
-  
-  carregarMarcadores() {
-    fetch('http://200.145.184.207:3013/')                       // consultando o banco e setando informacoes
-    .then(response => response.json())                          //
-    .then(markers => this.setState({ markers }))                // atribuindo todos marcadores ao array de marcadores
-    .catch((err) => alert(err))                                 // exibindo erro
-  }
-  
-  render(){
-    // mapType={'satellite'}
 
-    return(
-        <View style={Estilos.map}>
-          <MapView style={Estilos.map} showsMyLocationButton={true} showsUserLocation={true}
-            followsUserLocation={true} initialRegion={this.state.region} loadingEnabled={true}
-            >
-            {this.state.markers.map((marker, index) => (      //percorrendo array com os marcadores
-              <Marker key={index} coordinate={marker.coordinates}>  
-                <MapView.Callout style={Estilos.infoCallOut}> 
-                  <View style={Estilos.infoView}>
-                    <ImageBackground
-                      style={Estilos.mapaFoto}
-                      source={{uri: `${marker.enderecoImagem}`}}
-                      onLoad={() => this.forceUpdate()}
-                    >
-                      <Text style={{ width: 0, height: 0 }}>{Math.random()}</Text>
-                    </ImageBackground>
-                  </View>
-                </MapView.Callout>
-              </Marker>
+  exibirImagemDoMarcador(enderecoImagem) {
+    <View>
+      <Image style={Estilos.mapaFoto} source={{ uri: `http://192.168.0.13:3013/${enderecoImagem}` }}>
+      </Image>
+    </View>
+  }
+
+
+  render() {
+    // mapType={'satellite'}
+    return (
+      <View style={Estilos.map}>
+        <MapView style={Estilos.map} showsMyLocationButton={true} showsUserLocation={true}
+          showsPointsOfInterest={false}
+          moveOnMarkerPress = {false}
+
+          loadingEnabled = {true}
+          loadingIndicatorColor="#666666"
+          loadingBackgroundColor="#eeeeee"
+          region={{
+            latitude: this.state.latitude,
+            longitude: this.state.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421
+          }}
+        >
+          {this.state.markers.map((marker, index) => (      //percorrendo array com os marcadores
+            <Marker key={index} coordinate={marker.coordinates}>
+              <MapView.Callout style={Estilos.infoCallOut}>
+                <View style={Estilos.infoView}>
+                  <ImageBackground
+                    style={Estilos.mapaFoto}
+                    source={{ uri: `http://192.168.0.13:3013/${marker.enderecoImagem}` }}
+                    onLoad={() => this.forceUpdate()}
+                  >
+                  </ImageBackground>
+                </View>
+              </MapView.Callout>
+            </Marker>
             ))}
-          </MapView>
-          <View style={Estilos.viewMapa}>
-            <TouchableOpacity onPress={() =>{this.carregarMarcadores()}} style={Estilos.buttomAtualizarMapa}>
-              <Icon name='reload' size={25} color={'white'}/>                
-            </TouchableOpacity>
-          </View>
+        </MapView>
+        <View style={Estilos.viewMapa}>
+          <TouchableOpacity onPress={() => { this.carregarMarcadores() }} style={Estilos.buttomAtualizarMapa}>
+            <Icon name='reload' size={25} color={'white'} />
+          </TouchableOpacity>
         </View>
+      </View>
     )
   }
 }

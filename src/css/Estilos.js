@@ -46,8 +46,10 @@ export default StyleSheet.create({
         backgroundColor: '#FF0000'
     },
     buttomAtualizarMapa:{
-        padding: 10,
+        padding: 4,
         borderRadius: 50,
+        marginTop: 35,
+        marginLeft: 15,
         backgroundColor: '#4286f4'
     },
     Text:{
@@ -105,13 +107,16 @@ export default StyleSheet.create({
         alignItems: 'center'
     },
     mapaFoto:{
-        width: 250, 
+        padding:0,
+        margin:0,
+        width: 200,
         height: 300,
-        margin: 10
     },
     infoCallOut: {
         backgroundColor: '#FFA500',
-        borderRadius: 10
+        // borderRadius: 10,
+        // width:200,
+        // height:300
     },
     formulario:{
         marginTop: 5,
@@ -205,7 +210,6 @@ export default StyleSheet.create({
         display:'flex',
         flexDirection:'row',
         paddingTop: 20,
-        paddingLeft: 20
     },
     loginBotaoGoogle:{
         marginTop: 50,
